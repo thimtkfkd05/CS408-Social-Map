@@ -5,6 +5,7 @@
 <script src= "/libs/moment/moment.min.js"></script>
 <script src= "/libs/fullcalendar/fullcalendar.js"></script>
 <script src= "/javascripts/calendar.js"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXfi1nvZAd4r77rx_FCeHasUDIR8GrnEk"></script>
 <link rel = "stylesheet" href="/libs/font-awesome/css/font-awesome.css">
 <link rel = "stylesheet" href = "/libs/bootstrap/css/bootstrap.css">
 <link rel = "stylesheet" href = "/libs/fullcalendar/fullcalendar.css">
@@ -18,14 +19,35 @@
     <header>
         <%- include header %>
     </header>
-    <div class="container">
+    <section>
+    <div class="container row">
         <span class="col-xs-1"></span>
         <span id ="calendar_span" class="col-xs-10">
             <div id='calendar'></div>
         </span>
         <span class="col-xs-1"></span>
     </div>
-    
+    </section>
+
+    <div class="btn-group dropup floating_menu" onclick="btclick()">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span><i class="fa fa-plus"></i></span>
+            <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-right">
+            <li>
+                <a href="#">Add Schedule</a>
+            </li>
+            <li>
+                <a href="#">Import Schedule</a>
+            </li>
+            <li>
+                <a href="#">Export Schedule</a>
+            </li>
+        </ul>
+    </div>
+
+
     <!-- Modal -->
     <div class="modal fade" id="mapModal" role="dialog">
         <div class="modal-dialog">
@@ -33,11 +55,12 @@
             <!-- Modal content-->
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-dismiss="modal"><i class="fa fa-times"></i></button>
                     <h4 class="modal-title">Map</h4>
                 </div>
                 <div class="modal-body">
                     <div class="loader"></div>
+                    <div id="map"></div>
                 </div>
             </div>
 

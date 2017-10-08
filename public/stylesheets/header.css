@@ -3,10 +3,11 @@
 }
 #header a.navbar-brand {
 	color: #333;
+	margin-right: 10px;
 }
 
 #header-navbar .navbar-menu > li {
-	width: 120px;
+	width: 160px;
 	text-align: center;
 }
 

@@ -1,5 +1,5 @@
 var selected;
-var selected_event;
+var dropup = false;
 var full_event = [
     {
         id : 1,
@@ -30,7 +30,7 @@ $(document).ready(function() {
         header: {
             left: 'prev,today,next',
             center: 'title',
-            right: 'month,agendaWeek,agendaDay,listDay'
+            right: 'month'
         },
         events: full_event,
         dayClick: function(date, jsEvent, view) {
@@ -42,8 +42,47 @@ $(document).ready(function() {
         }
     });
 
-    $(document).on('click','.map-view',function () {
+    $('#mapModal').on('shown.bs.modal',function () {
        // $(this).data-id
+        var uluru = {lat: -25.363, lng: 131.044};
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 4,
+            center: uluru
+        });
+        var marker = new google.maps.Marker({
+            position: uluru,
+            map: map
+        });
+        $('.loader').hide();
+    }).on('hidden.bs.modal', function(){
+        $('#map').empty();
+        $('.loader').show();
     });
-
 });
+
+
+function btclick(){
+    if(!$('.dropup').hasClass('open')){
+        $('.dropup').find('.fa-plus').removeClass('fa-plus').addClass('fa-times');
+    }
+    else{
+        $('.dropup').find('.fa-times').removeClass('fa-times').addClass('fa-plus');
+    }
+}
+
+// function dropup_active(){
+//     if(dropup == false){
+//         $('.dropup-menu').show({
+//             duration: 500
+//         });
+//         $('.menu i').removeClass('fa-plus').addClass('fa-times');
+//         dropup = true;
+//     }
+//     else{
+//         $('.dropup-menu').hide({
+//             duration: 500
+//         });
+//         $('.menu i').addClass('fa-plus').removeClass('fa-times');
+//         dropup = false;
+//     }
+// }
