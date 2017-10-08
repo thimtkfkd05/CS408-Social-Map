@@ -14802,6 +14802,7 @@ var EventDef = FC.EventDef = Class.extend(ParsableModelMixin, {
 	backgroundColor: null,
 	borderColor: null,
 	textColor: null,
+	place: null,
 
 	className: null, // an array. TODO: rename to className*s* (API breakage)
 	miscProps: null,
@@ -17767,6 +17768,8 @@ var ListViewGrid = Grid.extend({
 			classes.push('fc-has-url');
 		}
 
+		eventDef.place = eventDef.miscProps.place || null;
+
 		return '<tr class="' + classes.join(' ') + '">' +
 			(this.displayEventTime ?
 				'<td class="fc-list-item-time ' + theme.getClass('widgetContent') + '">' +
@@ -17786,13 +17789,13 @@ var ListViewGrid = Grid.extend({
             '</a>' +
             '</td>' +
             '<td class="fc-list-item-button ' + theme.getClass('widgetContent') + '">' +
-            '<a class="map-view" data-toggle="modal" data-target="#mapModal" data-id="' + htmlEscape(eventDef.id || '') + '">' +
+			(eventDef.place ? '<a class="map-view" data-toggle="modal" data-target="#mapModal" data-id="' + htmlEscape(eventDef.id || '') + '">' +
 			'<i class="fa fa-map-marker"' +
             (bgColor ?
                 ' style="background-color:' + bgColor + '"' :
                 '') +
             '></i>' +
-			'</a>' +
+			'</a>' : '') +
             '</td>' +
 		'</tr>';
 	}

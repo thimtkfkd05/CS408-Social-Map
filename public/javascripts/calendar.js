@@ -1,4 +1,5 @@
 var selected;
+var place;
 var dropup = false;
 var full_event = [
     {
@@ -7,20 +8,21 @@ var full_event = [
         start  : '2017-10-08',
         end  : '2017-10-08',
         allDay : true,
-        place : "hello world"
+        place : {lat: -25.363, lng: 131.044}
     },
     {
         id : 2,
         title  : 'event2',
         start  : '2017-10-05',
-        end    : '2017-10-11'
+        end    : '2017-10-11',
+        place : {lat: 36.374077, lng: 127.365463}
     },
     {
         id : 3,
         title  : 'event3',
         start  : '2017-10-09T12:30:00',
         end  : '2017-10-09T16:30:00',
-        allDay : false // will make the time show
+        allDay : false // will make the time show,
     }
 ];
 
@@ -41,16 +43,26 @@ $(document).ready(function() {
 
         }
     });
+$(document).on('click','.map-view', function () {
+    var id = $(this).data('id');
+        full_event.some(function (t) {
+            if (t.id == id) {
+                place = t.place;
+                return true;
+            } else {
+                return false;
+            }
+        });
+
+    });
 
     $('#mapModal').on('shown.bs.modal',function () {
-       // $(this).data-id
-        var uluru = {lat: -25.363, lng: 131.044};
         var map = new google.maps.Map(document.getElementById('map'), {
-            zoom: 4,
-            center: uluru
+            zoom: 17,
+            center: place
         });
         var marker = new google.maps.Marker({
-            position: uluru,
+            position: place,
             map: map
         });
         $('.loader').hide();
