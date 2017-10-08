@@ -2,10 +2,18 @@
 <html>
   <head>
     <title><%= title %></title>
+    <link rel='stylesheet' href='/libs/bootstrap/css/bootstrap.min.css' />
+    <link rel="stylesheet" href='/libs/font-awesome/css/font-awesome.min.css' />
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel='stylesheet' href='/stylesheets/header.css' />
   </head>
   <body>
+  	<header>
+  		<%- include header %>
+  	</header>
     <h1><%= title %></h1>
     <p>Welcome to <%= title %></p>
+
+    <script src="../public/libs/bootstrap/js/bootstrap.min.js"></script>
   </body>
 </html>

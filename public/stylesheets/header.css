@@ -1,0 +1,21 @@
+#header {
+    background-color: #ffffcc;
+}
+#header a.navbar-brand {
+	color: #333;
+}
+
+#header-navbar .navbar-menu > li {
+	width: 120px;
+	text-align: center;
+}
+
+#header-navbar a {
+	color: #5cb85c;
+}
+#header-navbar a:hover {
+	background-color: #ffebcd;
+}
+#header-navbar a .fa {
+	font-size: 16px;
+}
