@@ -18,6 +18,7 @@ var port = process.env.PORT || 3000;
 app.set('port', port);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
+app.engine('html', require('ejs').renderFile);
 app.use(logger('dev'));
 app.use(bodyParser.urlencoded({
   extended: true
@@ -29,6 +30,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(errorHandler());
 
 app.get('/', routes.index);
+app.get('/calendar', routes.calendar);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));

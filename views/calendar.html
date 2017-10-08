@@ -1,40 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-<script src= "../public/libs/jquery/jquery.js"></script>
-<script src= "../public/libs/bootstrap/js/bootstrap.js"></script>
-<script src= "../public/libs/moment/moment.min.js"></script>
-<script src= "../public/libs/fullcalendar/fullcalendar.js"></script>
-<script src= "../public/javascripts/calendar.js"></script>
-<link rel = "stylesheet" href="../public/libs/font-awesome/css/font-awesome.css">
-<link rel = "stylesheet" href = "../public/libs/bootstrap/css/bootstrap.css">
-<link rel = "stylesheet" href = "../public/libs/fullcalendar/fullcalendar.css">
-<link rel = "stylesheet" href = "../public/stylesheets/calendar.css">
+<script src= "/libs/jquery/jquery.js"></script>
+<script src= "/libs/bootstrap/js/bootstrap.js"></script>
+<script src= "/libs/moment/moment.min.js"></script>
+<script src= "/libs/fullcalendar/fullcalendar.js"></script>
+<script src= "/javascripts/calendar.js"></script>
+<link rel = "stylesheet" href="/libs/font-awesome/css/font-awesome.css">
+<link rel = "stylesheet" href = "/libs/bootstrap/css/bootstrap.css">
+<link rel = "stylesheet" href = "/libs/fullcalendar/fullcalendar.css">
+<link rel = "stylesheet" href = "/stylesheets/header.css">
+<link rel = "stylesheet" href = "/stylesheets/calendar.css">
 <head>
     <meta charset="UTF-8">
     <title>calendar</title>
 </head>
 <body>
-<span class="col-xs-1"></span>
-<span id ="calendar_span" class="col-xs-10">
-    <div id='calendar'></div>
-</span>
-<span class="col-xs-1"></span>
-<!-- Modal -->
-<div class="modal fade" id="mapModal" role="dialog">
-    <div class="modal-dialog">
-
-        <!-- Modal content-->
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Map</h4>
-            </div>
-            <div class="modal-body">
-                <div class="loader"></div>
-            </div>
-        </div>
-
+    <header>
+        <%- include header %>
+    </header>
+    <div class="container">
+        <span class="col-xs-1"></span>
+        <span id ="calendar_span" class="col-xs-10">
+            <div id='calendar'></div>
+        </span>
+        <span class="col-xs-1"></span>
     </div>
-</div>
+    
+    <!-- Modal -->
+    <div class="modal fade" id="mapModal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Map</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="loader"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </body>
 </html>
