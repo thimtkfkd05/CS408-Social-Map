@@ -2,8 +2,12 @@
 <html lang="en">
 <script src= "../public/libs/jquery/jquery.js"></script>
 <script src= "../public/libs/bootstrap/js/bootstrap.js"></script>
-<script src= "../public/libs/calendar.js"></script>
+<script src= "../public/libs/moment/moment.min.js"></script>
+<script src= "../public/libs/fullcalendar/fullcalendar.js"></script>
+<script src= "../public/javascripts/calendar.js"></script>
+<link rel = "stylesheet" href="../public/libs/font-awesome/css/font-awesome.css">
 <link rel = "stylesheet" href = "../public/libs/bootstrap/css/bootstrap.css">
+<link rel = "stylesheet" href = "../public/libs/fullcalendar/fullcalendar.css">
 <link rel = "stylesheet" href = "../public/stylesheets/calendar.css">
 <head>
     <meta charset="UTF-8">
@@ -11,75 +15,26 @@
 </head>
 <body>
 <span class="col-xs-1"></span>
-<span id ="calendar_span" class="col-xs-10" style="background-color: #00b7ff">
-    <table>
-        <thead>
-            <th>Sun</th>
-            <th>Mon</th>
-            <th>Tue</th>
-            <th>Wed</th>
-            <th>Thu</th>
-            <th>Fri</th>
-            <th>Sat</th>
-        </thead>
-        <tbody>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-        </tbody>
-    </table>
+<span id ="calendar_span" class="col-xs-10">
+    <div id='calendar'></div>
 </span>
 <span class="col-xs-1"></span>
+<!-- Modal -->
+<div class="modal fade" id="mapModal" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Map</h4>
+            </div>
+            <div class="modal-body">
+                <div class="loader"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
 </body>
 </html>

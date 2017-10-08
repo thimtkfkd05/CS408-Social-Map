@@ -17710,7 +17710,7 @@ var ListViewGrid = Grid.extend({
 		var altFormat = this.opt('listDayAltFormat');
 
 		return '<tr class="fc-list-heading" data-date="' + dayDate.format('YYYY-MM-DD') + '">' +
-			'<td class="' + view.calendar.theme.getClass('widgetHeader') + '" colspan="3">' +
+			'<td class="' + view.calendar.theme.getClass('widgetHeader') + '" colspan="4">' +
 				(mainFormat ?
 					view.buildGotoAnchorHtml(
 						dayDate,
@@ -17780,11 +17780,20 @@ var ListViewGrid = Grid.extend({
 					'') +
 				'></span>' +
 			'</td>' +
-			'<td class="fc-list-item-title ' + theme.getClass('widgetContent') + '">' +
-				'<a' + (url ? ' href="' + htmlEscape(url) + '"' : '') + '>' +
-					htmlEscape(eventDef.title || '') +
-				'</a>' +
-			'</td>' +
+            '<td class="fc-list-item-title ' + theme.getClass('widgetContent') + '">' +
+            '<a' + (url ? ' href="' + htmlEscape(url) + '"' : '') + '>' +
+            htmlEscape(eventDef.title || '') +
+            '</a>' +
+            '</td>' +
+            '<td class="fc-list-item-button ' + theme.getClass('widgetContent') + '">' +
+            '<a class="map-view" data-toggle="modal" data-target="#mapModal" data-id="' + htmlEscape(eventDef.id || '') + '">' +
+			'<i class="fa fa-map-marker"' +
+            (bgColor ?
+                ' style="background-color:' + bgColor + '"' :
+                '') +
+            '></i>' +
+			'</a>' +
+            '</td>' +
 		'</tr>';
 	}
 

@@ -1452,6 +1452,11 @@ be a descendant of the grid when it is being dragged.
 	width: 1px;
 }
 
+.fc-list-item-button {
+	white-space: nowrap;
+	width: 10px;
+}
+
 /* make the dot closer to the event title */
 .fc-ltr .fc-list-item-marker { padding-right: 0; }
 .fc-rtl .fc-list-item-marker { padding-left: 0; }
