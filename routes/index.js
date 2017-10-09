@@ -10,3 +10,7 @@ exports.index = function(req, res){
 exports.calendar = function(req, res){
     res.render('calendar.html');
 };
+
+exports.recommendation = function(req, res){
+    res.render('recommendation.html');
+};
