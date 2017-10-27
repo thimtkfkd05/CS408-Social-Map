@@ -4,7 +4,8 @@
  */
 
 exports.index = function(req, res){
-  res.render('index', { title: 'Express' });
+  //res.render('index', { title: 'Express' });
+  res.redirect('/recommendation');
 };
 
 exports.calendar = function(req, res){
