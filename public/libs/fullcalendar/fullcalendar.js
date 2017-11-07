@@ -17794,7 +17794,7 @@ var ListViewGrid = Grid.extend({
             (bgColor ?
                 ' style="background-color:' + bgColor + '"' :
                 '') +
-            '></i>' +
+            '></i> View Map' +
 			'</a>' : '') +
             '</td>' +
 		'</tr>';
