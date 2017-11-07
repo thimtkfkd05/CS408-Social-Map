@@ -31,7 +31,7 @@ app.use(errorHandler());
 
 app.get('/', routes.index);
 app.get('/calendar', routes.calendar);
-app.get('/recommendation', routes.recommendation);
+app.get('/events', routes.events);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));

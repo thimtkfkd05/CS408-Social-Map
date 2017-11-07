@@ -5,13 +5,13 @@
 
 exports.index = function(req, res){
   //res.render('index', { title: 'Express' });
-  res.redirect('/recommendation');
+  res.redirect('/events');
 };
 
 exports.calendar = function(req, res){
     res.render('calendar.html');
 };
 
-exports.recommendation = function(req, res){
+exports.events = function(req, res){
     res.render('recommendation.html');
 };
