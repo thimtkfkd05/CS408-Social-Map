@@ -32,7 +32,7 @@ $(document).ready(function() {
         header: {
             left: 'prev,today,next',
             center: 'title',
-            right: 'month'
+            right: 'month,agendaWeek,listDay'
         },
         events: full_event,
         dayClick: function(date, jsEvent, view) {
