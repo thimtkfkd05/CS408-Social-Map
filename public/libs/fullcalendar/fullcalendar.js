@@ -12826,7 +12826,7 @@ Calendar.mixin({
 		this.toolbarsManager.proxyCall(
 			(todayInfo.isValid && !view.currentUnzonedRange.containsDate(now)) ?
 				'enableButton' :
-				'disableButton',
+				'enableButton',
 			'today'
 		);
 
@@ -13547,7 +13547,7 @@ Calendar.defaults = {
 	header: {
 		left: 'title',
 		center: '',
-		right: 'today prev,next'
+		///right: 'today prev,next'
 	},
 	weekends: true,
 	weekNumbers: false,

@@ -1,5 +1,5 @@
 #header {
-    background-color: #ffffcc;
+    background-color: white;
 }
 #header a.navbar-brand {
 	color: #333;
@@ -12,11 +12,13 @@
 }
 
 #header-navbar a {
-	color: #5cb85c;
+	color: black;
 }
 #header-navbar a:hover {
-	background-color: #ffebcd;
+	text-decoration: underline;
+	background-color: white;
 }
 #header-navbar a .fa {
 	font-size: 16px;
 }
+
