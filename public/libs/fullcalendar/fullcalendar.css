@@ -265,6 +265,22 @@ hr.fc-divider {
 	text-align: center;
 }
 
+th.fc-day-header.fc-widget-header.fc-sun{
+	color : red;
+}
+
+th.fc-day-header.fc-widget-header.fc-sat{
+	color : blue;
+}
+
+td.fc-day-top.fc-sun{
+	color : red;
+}
+
+td.fc-day-top.fc-sat{
+	color : blue;
+}
+
 .fc th,
 .fc td {
 	border-style: solid;
