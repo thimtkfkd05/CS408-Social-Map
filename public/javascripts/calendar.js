@@ -34,6 +34,7 @@ $(document).ready(function() {
             center: 'title',
             right: 'month,agendaWeek,listDay'
         },
+        defaultView: 'agendaWeek',
         events: full_event,
         dayClick: function(date, jsEvent, view) {
             selected && selected.removeClass("selected");
