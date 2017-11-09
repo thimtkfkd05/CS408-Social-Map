@@ -11423,7 +11423,9 @@ function Toolbar(calendar, toolbarOptions) {
 											buttonEl.hasClass(theme.getClass('stateActive')) ||
 											buttonEl.hasClass(theme.getClass('stateDisabled'))
 										) {
-											buttonEl.removeClass(theme.getClass('stateHover'));
+											buttonEl.removeClass(theme.getClass('stateActive'));
+                                            buttonEl.removeClass(theme.getClass('stateDisabled'));
+											//buttonEl.removeClass(theme.getClass('stateHover'));
 										}
 									}
 								})
@@ -11493,10 +11495,10 @@ function Toolbar(calendar, toolbarOptions) {
 
 
 	function activateButton(buttonName) {
-		if (el) {
-			el.find('.fc-' + buttonName + '-button')
-				.addClass(calendar.theme.getClass('stateActive'));
-		}
+		// if (el) {
+		// 	el.find('.fc-' + buttonName + '-button')
+		// 		.addClass(calendar.theme.getClass('stateActive'));
+		// }
 	}
 
 
@@ -13583,7 +13585,7 @@ Calendar.defaults = {
 		nextYear: "next year",
 		year: 'year', // TODO: locale files need to specify this
 		today: 'today',
-		month: 'calendar',
+		month: 'month',
 		week: 'week',
 		day: 'day'
 	},
@@ -17808,7 +17810,7 @@ fcViews.list = {
 	'class': ListView,
 	buttonTextKey: 'list', // what to lookup in locale files
 	defaults: {
-		buttonText: 'list', // text to display for English
+		buttonText: 'day', // text to display for English
 		listDayFormat: 'LL', // like "January 1, 2016"
 		noEventsMessage: 'No events to display'
 	}
