@@ -23,7 +23,7 @@ td .fc-today.selected{
 .modal-content{
     height: auto;
     min-height: 100%;
-    border-radius: 0;
+    border: none;
 }
 
 .modal-header{
@@ -69,7 +69,8 @@ td .fc-today.selected{
 
 #mapModal {
     padding: 0;
-    margin: 0;
+    margin: 50px 200px;
+    border-radius: 5px;
 }
 
 .map-view {
