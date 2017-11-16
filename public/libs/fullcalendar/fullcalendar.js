@@ -17791,13 +17791,16 @@ var ListViewGrid = Grid.extend({
             '</a>' +
             '</td>' +
             '<td class="fc-list-item-button ' + theme.getClass('widgetContent') + '">' +
-			(eventDef.place ? '<a class="map-view" data-toggle="modal" data-target="#mapModal" data-id="' + htmlEscape(eventDef.id || '') + '">' +
+            (eventDef.place ? '<a class="map-view" data-toggle="modal" data-target="#mapModal" data-id="' + htmlEscape(eventDef.id || '') + '">' +
 			'<i class="fa fa-map-marker"' +
-            (bgColor ?
-                ' style="background-color:' + bgColor + '"' :
-                '') +
+            (bgColor ? ' style="background-color:' + bgColor + '"' : '') +
             '></i> View Map' +
 			'</a>' : '') +
+            '<a class="export_btn" data-id="' + htmlEscape(eventDef.id || '') + '">' +
+            '<i class="fa fa-calendar"' +
+            (bgColor ? ' style="background-color:' + bgColor + '"' : '') +
+            '></i> Export' +
+            '</a>' +
             '</td>' +
 		'</tr>';
 	}

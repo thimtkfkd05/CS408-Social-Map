@@ -2,13 +2,15 @@
 <html lang="en">
 <script src= "/libs/jquery/jquery.js"></script>
 <script src= "/libs/bootstrap/js/bootstrap.js"></script>
-<script src= "/libs/moment/moment.min.js"></script>
+<script src= "/libs/moment/moment-with-locales.min.js"></script>
 <script src= "/libs/fullcalendar/fullcalendar.js"></script>
+<script src= "/libs/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
 <script src= "/javascripts/calendar.js"></script>
 <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXfi1nvZAd4r77rx_FCeHasUDIR8GrnEk"></script>
 <link rel = "stylesheet" href="/libs/font-awesome/css/font-awesome.css">
 <link rel = "stylesheet" href = "/libs/bootstrap/css/bootstrap.css">
 <link rel = "stylesheet" href = "/libs/fullcalendar/fullcalendar.css">
+<link rel = "stylesheet" href = "/libs/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css">
 <link rel = "stylesheet" href = "/stylesheets/header.css">
 <link rel = "stylesheet" href = "/stylesheets/calendar.css">
 <head>
@@ -39,7 +41,7 @@
                 <a href="#">Add Schedule</a>
             </li>
             <li>
-                <a href="#">Import Schedule</a>
+                <a id="import_schedule" data-toggle="modal" data-target="#import_google">Import Schedule</a>
             </li>
             <li>
                 <a href="#">Export Schedule</a>
@@ -66,5 +68,56 @@
 
         </div>
     </div>
+    
+    <div class="modal fade" id="import_google" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><i class="fa fa-times"></i></button>
+                    <h4 class="modal-title">Import Schedule from Google Calendar</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="import_description" class="alert alert-info">
+                        Select start time and end time of schedules you want to import.
+                    </div>
+                    <div class="date_container">
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div class="form-group row">
+                                    <span class="date_title col-xs-3">Start Date : </span>
+                                    <div class="input-group date col-xs-9" id="start_date">
+                                        <input type="text" class="form-control" />
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-6">
+                                <div class="form-group row">
+                                    <span class="date_title col-xs-3">End Date : </span>
+                                    <div class="input-group date col-xs-9" id="end_date">
+                                        <input type="text" class="form-control" />
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="alert alert-danger warning_msg" style="margin: 15px 0 -5px; display: none;">Start Date is later than End Date!</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="form-group">
+                        <button class="btn btn-success import_btn">Import</button>
+                        <button class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
