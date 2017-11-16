@@ -35,6 +35,7 @@ app.use(errorHandler());
 app.get('/', routes.index);
 app.get('/calendar', routes.calendar);
 app.get('/events', routes.events);
+app.get('/calendardata', routes.calendardata);
 
 function connectDB(){
   var databaseUrl = 'mongodb://143.248.140.33:6289/local';

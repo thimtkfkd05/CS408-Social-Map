@@ -16,6 +16,10 @@ exports.events = function(req, res){
     res.render('recommendation.html');
 };
 
+exports.calendardata = function(req, res){
+    res.render('calendardata.html');
+};
+
 // modules.exports = function (app) {
 //   app.get('', function(req, res){
 //     res.end();
