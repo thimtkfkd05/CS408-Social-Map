@@ -32,6 +32,8 @@ app.use(errorHandler());
 app.get('/', routes.index);
 app.get('/calendar', routes.calendar);
 app.get('/events', routes.events);
+app.get('/auth/google_login', routes.google_login);
+app.get('/auth/google_access', routes.google_access);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
