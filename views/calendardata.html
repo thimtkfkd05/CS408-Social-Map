@@ -5,7 +5,8 @@
 <script src= "/libs/moment/moment.min.js"></script>
 <script src= "/libs/fullcalendar/fullcalendar.js"></script>
 <script src= "/javascripts/calendar.js"></script>
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXfi1nvZAd4r77rx_FCeHasUDIR8GrnEk"></script>
+<script src= "/javascripts/calendardata.js"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXfi1nvZAd4r77rx_FCeHasUDIR8GrnEk&callback=initialize"></script>
 <link rel = "stylesheet" href="/libs/font-awesome/css/font-awesome.css">
 <link rel = "stylesheet" href = "/libs/bootstrap/css/bootstrap.css">
 <link rel = "stylesheet" href = "/libs/fullcalendar/fullcalendar.css">
@@ -29,11 +30,11 @@
                         <span class = 'glyphicon glyphicon-arrow-left' aria-hidden="true"></span>
                         되돌아가기
                     </button>
-                    <button type="button" class="btn btn-default">
+                    <button type="button" class="btn btn-default save">
                         <span class = 'glyphicon glyphicon-ok' aria-hidden="true"></span>
                         저장
                     </button>
-                    <button type="button" class="btn btn-default">
+                    <button type="button" class="btn btn-default remove">
                         <span class = 'glyphicon glyphicon-trash' aria-hidden="true"></span>
                         삭제
                     </button>
@@ -47,8 +48,8 @@
                     <span class="col-xs-1 title">Start</span>
                     <div class='col-xs-4 time-container-wrapper'>
                         <div class="time-container form-group">
-                            <div class='input-group date' id='datetimepicker1'>
-                                <input type='text' class="form-control" />
+                            <div class='input-group date'>
+                                <input type='text' class="form-control" id='datetimepicker1'>
                                 <span class="input-group-addon">
                                     <i class="fa fa-calendar" aria-hidden="true"></i>
                                 </span>
@@ -58,8 +59,8 @@
                     <span class="col-xs-1 title">End</span>
                     <div class='col-xs-4 time-container-wrapper'>
                         <div class="time-container form-group">
-                            <div class='input-group date' id='datetimepicker2'>
-                                <input type='text' class="form-control" />
+                            <div class='input-group date'>
+                                <input type='text' class="form-control" id='datetimepicker2'>
                                 <span class="input-group-addon">
                                     <i class="fa fa-calendar" aria-hidden="true"></i>
                                 </span>
@@ -74,7 +75,7 @@
                 </div>
 
                 <div class='row'>
-                    <textarea class ='explain form-control'>
+                    <textarea class ='explain form-control' id ="description">
                     </textarea>
                 </div>
 

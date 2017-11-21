@@ -62,6 +62,7 @@ $(document).on('click','.map-view', function () {
             zoom: 17,
             center: place
         });
+
         var marker = new google.maps.Marker({
             position: place,
             map: map
