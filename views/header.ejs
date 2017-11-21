@@ -1,3 +1,5 @@
+<meta name="google-signin-client_id" content="468607746966-bqb4r002gsu8oavgsn2igh5hntoa295j.apps.googleusercontent.com">
+<script src="https://apis.google.com/js/platform.js" async defer></script>
 <div id="header">
     <div class="col-xs-1"></div>
 	<div class="container col-xs-10">
@@ -19,9 +21,10 @@
 				</li>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
-				<!--<li>-->
-					<!--<a href=""><i class="fa fa-user-o"></i> Login</a>-->
-				<!--</li>-->
+				<li>
+					<a href="/auth/google_login"><i class="fa fa-user-o"></i> Login</a>
+				    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+                </li>
 				<li>
 					<a href=""><i class="fa fa-cog"></i> Settings</a>
 				</li>

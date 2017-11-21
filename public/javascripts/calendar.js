@@ -44,6 +44,7 @@ $(document).ready(function() {
 
         }
     });
+
 $(document).on('click','.map-view', function () {
     var id = $(this).data('id');
         full_event.some(function (t) {
@@ -83,6 +84,137 @@ function btclick(){
         $('.dropup').find('.fa-times').removeClass('fa-times').addClass('fa-plus');
     }
 }
+
+$(document).on('click', '#import_schedule', function() {
+    $('#import_google').on('shown.bs.modal', function() {
+        $('#start_date,#end_date').datetimepicker({
+            format: 'YYYY/MM/DD hh:mm',
+            useCurrent: true
+        });
+    });
+});
+
+$(document).on('click', '.import_btn', function() {
+    var start_picker = $('#start_date').data();
+    var end_picker = $('#end_date').data();
+
+    var start_date = start_picker.date ? new Date(start_picker.date) : null;
+    var end_date = end_picker.date ? new Date(end_picker.date) : null;
+
+    if (start_date && end_date && start_date.getTime() >= end_date.getTime()) {
+        $('.warning_msg').show();
+        setTimeout(function() {
+            $('.warning_msg').hide();
+        }, 2000);
+    } else {
+        console.log(start_date, end_date);
+
+        var calendarId = '';
+        /*
+        $.get('https://www.googleapis.com/calendar/v3/users/me/calendarList', {}, function(cal_list) {
+            if (cal_list && !cal_list.error) {
+                cal_list.items.some(function(cal) {
+                    if (cal.accessRole == 'owner') {
+                        calendarId = cal.id;
+                        return true;
+                    } else {
+                        return false;
+                    }
+                });
+        */
+                var options = {};
+                if (start_date) {
+                    options.timeMin = start_date.toJSON();
+                }
+                if (end_date) {
+                    options.timeMax = end_date.toJSON();
+                }
+
+                /*
+                $.get('https://www.googleapis.com/calendar/v3/calendars/' + calendarId + '/events', options, function(result) {
+                    if (result && !result.error) {
+                        var events = result.items;
+                    } else {
+                        console.log(result.error.message);
+                    }
+                */
+                    $(this).parents('.modal.in').modal('hide');
+            
+                    $('#start_date input,#end_date input').val('');
+                    start_picker.DateTimePicker.destroy();
+                    end_picker.DateTimePicker.destroy();
+                //});
+            //} else {
+            //    console.log(cal_list.error.message);
+            //}
+        //});
+    }
+});
+
+function make_random_string(num) {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for (var i = 0; i < num; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    
+    return text;
+}
+
+$(document).on('click', '.export_btn', function() {
+    var id = $(this).data('id');
+    var ex_event;
+    full_event.some(function (t) {
+        if (t.id == id) {
+            ex_event = t;
+            return true;
+        } else {
+            return false;
+        }
+    });
+
+    var calendarId = '';
+
+    /*   
+    $.get('https://www.googleapis.com/calendar/v3/users/me/calendarList', {}, function(cal_list) {
+        if (cal_list && !cal_list.error) {
+            cal_list.items.some(function(cal) {
+                if (cal.accessRole == 'owner') {
+                    calendarId = cal.id;
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+
+            var options = {
+                iCalUID: make_random_string(17) + '@google.com',
+                start: {
+                    dateTime: new Date(ex_event.start).toJSON()
+                },
+                end: {
+                    dateTime: new Date(ex_event.end).toJSON()
+                },
+                summary: ex_event.title,
+                description: ex_event.description || ''
+            };
+
+            $.post('https://www.googleapis.com/calendar/v3/calendars/' + calendarId + '/events/import', options, function(result) {
+                if (result && !result.error) {
+                    console.log('Export Success!');
+                } else {
+                    console.log(result.error.message);
+                }
+            });
+        } else {
+            console.log(cal_list.error.message);
+        }
+        */
+
+        console.log("Export ", ex_event);
+    //});
+});
 
 // function dropup_active(){
 //     if(dropup == false){
