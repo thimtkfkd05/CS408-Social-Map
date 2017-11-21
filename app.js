@@ -10,10 +10,13 @@ var express = require('express')
   , errorHandler = require('errorhandler')
   , routes = require('./routes')
   , http = require('http')
-  , path = require('path');
+  , path = require('path')
+  , mongoose = require('mongoose')
+  , mongodb = require('mongodb');
 
 var app = express();
 var port = process.env.PORT || 3000;
+var database;
 
 app.set('port', port);
 app.set('views', __dirname + '/views');
@@ -35,6 +38,19 @@ app.get('/events', routes.events);
 app.get('/auth/google_login', routes.google_login);
 app.get('/auth/google_access', routes.google_access);
 
+function connectDB(){
+  var databaseUrl = 'mongodb://143.248.140.33:6289/local';
+  var MongoClient = mongodb.MongoClient;
+
+  MongoClient.connect(databaseUrl, function (err, db) {
+    if(err) throw err;
+    console.log('connection successful');
+    database = db;
+  });
+}
+
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
+
+  connectDB();
 });
