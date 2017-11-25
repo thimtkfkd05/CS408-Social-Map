@@ -1,6 +1,7 @@
 var google = require('googleapis');
 // for DEBUG
 var server_url = 'http://localhost:3000/';
+var db_event = require('./hero.model');
 
 exports.index = function(req, res){
   //res.render('index', { title: 'Express' });
@@ -13,6 +14,10 @@ exports.calendar = function(req, res){
 
 exports.events = function(req, res){
     res.render('recommendation.html');
+};
+
+exports.calendardata = function(req, res){
+    res.render('calendardata.html');
 };
 
 exports.google_login = function(req, res){
@@ -39,4 +44,16 @@ exports.google_access = function(req, res){
     console.log(req.query); 
 
     res.redirect('/calendar');
+};
+
+exports.event_save = function(req, res) {
+    var event_data = req.body;
+    var db = req.app.get('db');
+    db.collection('Heroes').insertOne(event_data, function(err, result) {
+        console.log(err, result);
+        res.json({
+            err: err,
+            result: result
+        });
+    })
 };
