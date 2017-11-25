@@ -38,17 +38,18 @@ app.get('/events', routes.events);
 app.get('/calendardata', routes.calendardata);
 app.get('/auth/google_login', routes.google_login);
 app.get('/auth/google_access', routes.google_access);
-app.get('/')
+app.post('/event_save', routes.event_save);
 
 
 function connectDB(){
-  var databaseUrl = 'mongodb://joindb:ZMbhVsBfyOmsuOePTJfCOddJmJsV0XWR1imvBOGQvMaJMKUlHSYyL70L6ehWcvVTuKLQmZ7KYLiOp5E5cdlpmg==@joindb.documents.azure.com:10250/mean?ssl=true&sslverifycertificate=false'
+  var databaseUrl = 'mongodb://joindb:ZMbhVsBfyOmsuOePTJfCOddJmJsV0XWR1imvBOGQvMaJMKUlHSYyL70L6ehWcvVTuKLQmZ7KYLiOp5E5cdlpmg==@joindb.documents.azure.com:10255/?ssl=true'
     var MongoClient = mongodb.MongoClient;
 
   MongoClient.connect(databaseUrl, function (err, db) {
     if(err) throw err;
     console.log('connection successful');
     database = db;
+    app.set('db', database);
   });
 }
 
