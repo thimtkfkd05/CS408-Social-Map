@@ -82,14 +82,14 @@ exports.event_save = function(req, res) {
             if (find_result) {
                 db_event.updateOne({
                     id: event_data.id
-                }, event_data, function(update_err, result) {
+                }, event_data, function (update_err, result) {
                     res.json({
                         err: update_err,
                         result: result
                     });
                 });
             } else if (!find_err) {
-                db_event.insertOne(event_data, function(err, result) {
+                db_event.insertOne(event_data, function (err, result) {
                     res.json({
                         err: err,
                         result: result
@@ -101,7 +101,9 @@ exports.event_save = function(req, res) {
                     result: null
                 });
             }
-    } else if (req.body.events && req.body.events.length) {
+        });
+    }
+    else if (req.body.events && req.body.events.length) {
         var events = req.body.events;
         db_event.insertMany(events, function(err, result) {
             res.json({

@@ -6,6 +6,7 @@
     "start": "node app"
   },
   "dependencies": {
+    "async": "^2.6.0",
     "bootstrap-datetimepicker-npm": "^4.17.37-npm",
     "ejs": "*",
     "errorhandler": "^1.5.0",

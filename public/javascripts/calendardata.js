@@ -41,7 +41,7 @@ $(document).on('click',".remove",function (e) {
 function initialize() {
     var myOptions = {
         zoom: 15,
-        center: place,
+        center: new google.maps.LatLng(place.lat, place.lng)
     }
     map = new google.maps.Map(document.getElementById("marker"), myOptions);
 
