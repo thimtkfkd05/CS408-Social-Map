@@ -21,7 +21,7 @@ $(document).on('click',".save",function (e) {
         data['Allday'] = $("#inlineCheckbox1").prop("checked");
         data['description'] = document.getElementById("description").value;
         data['place'] = marker_locate;
-        data['id'] = 1;
+        data['id'] = new Date().getTime();
         console.log(data);
 
         $.post('/event_save', data, function(result) {
@@ -33,6 +33,11 @@ $(document).on('click',".save",function (e) {
         });
     }
 })
+
+$(document).on('click',".remove",function (e) {
+
+}
+}
 
 function initialize() {
     var myOptions = {

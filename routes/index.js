@@ -48,12 +48,6 @@ exports.google_access = function(req, res){
 
 exports.event_save = function(req, res) {
     var event_data = req.body;
-    var snapshot = new db_event(event_data);
-
-    // snapshot.save(function(saved) {
-    //     console.log(true);
-    //     res.json(true);
-    // });
     var db = req.app.get('db');
     db.collection('Heroes').insertOne(event_data, function(err, result) {
         console.log(err, result);
