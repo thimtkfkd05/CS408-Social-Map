@@ -35,20 +35,25 @@ app.use(errorHandler());
 app.get('/', routes.index);
 app.get('/calendar', routes.calendar);
 app.get('/events', routes.events);
+app.get('/calendardata', routes.calendardata);
+app.get('/auth/google_login', routes.google_login);
+app.get('/auth/google_access', routes.google_access);
+app.post('/event_save', routes.event_save);
+
 
 function connectDB(){
-  var databaseUrl = 'mongodb://143.248.140.33:6289/local';
-  var MongoClient = mongodb.MongoClient;
+  var databaseUrl = 'mongodb://joindb:ZMbhVsBfyOmsuOePTJfCOddJmJsV0XWR1imvBOGQvMaJMKUlHSYyL70L6ehWcvVTuKLQmZ7KYLiOp5E5cdlpmg==@joindb.documents.azure.com:10255/?ssl=true'
+    var MongoClient = mongodb.MongoClient;
 
   MongoClient.connect(databaseUrl, function (err, db) {
     if(err) throw err;
     console.log('connection successful');
     database = db;
+    app.set('db', database);
   });
 }
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
-
-  connectDB();
+  connectDB()
 });

@@ -73,8 +73,14 @@ td .fc-today.selected{
     border-radius: 5px;
 }
 
-.map-view {
+.map-view,.export_btn {
     cursor: pointer;
+}
+.map-view + .export_btn {
+    margin-left: 10px;
+}
+.export_btn:only-child {
+    float: right;
 }
 
 .floating_menu{
@@ -104,3 +110,23 @@ td .fc-today.selected{
     right: 14px;
     top: 14px;
 }
+
+#import_google .modal-content {
+    min-height: 260px;
+    width: 800px;
+    top: 100px;
+    left: calc(50% - 400px);
+}
+#import_google .modal-content .form-group {
+    margin: 0;
+}
+#import_google .modal-body {
+    padding: 20px;
+}
+#import_google .modal-body .date_title {
+    padding: 7px 0;
+}
+#import_google .modal-footer .form-group {
+    text-align: center;
+}
+
