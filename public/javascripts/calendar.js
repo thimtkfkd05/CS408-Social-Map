@@ -153,7 +153,7 @@ $(document).on('click', '.import_btn', function() {
 
 function make_random_string(num) {
     var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    var possible = "abcdefghijklmnopqrstuvwxyz0123456789";
 
     for (var i = 0; i < num; i++) {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
@@ -232,3 +232,7 @@ $(document).on('click', '.export_btn', function() {
 //         dropup = false;
 //     }
 // }
+
+$(document).on('click', '.modification_btn', function() {
+
+});

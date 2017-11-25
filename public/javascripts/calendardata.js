@@ -16,12 +16,12 @@ $(document).on('click',".save",function (e) {
     }
     else {
         data['title'] = document.getElementById("title").value;
-        data['start'] = start_picker.date;
-        data['end'] = end_picker.date;
+        data['start'] = new Date(start_picker.date).toISOString()
+        data['end'] = new Date(end_picker.date).toISOString()
         data['Allday'] = $("#inlineCheckbox1").prop("checked");
         data['description'] = document.getElementById("description").value;
         data['place'] = marker_locate;
-        data['id'] = new Date().getTime();
+        data['id'] = make_random_string(26);
         console.log(data);
 
         $.post('/event_save', data, function(result) {
@@ -36,8 +36,7 @@ $(document).on('click',".save",function (e) {
 
 $(document).on('click',".remove",function (e) {
 
-}
-}
+});
 
 function initialize() {
     var myOptions = {
@@ -65,4 +64,15 @@ function placeMarker(location) {
 
 function deleteMarker(){
     marker.setMap(null);
+}
+
+function make_random_string(num) {
+    var text = "";
+    var possible = "abcdefghijklmnopqrstuvwxyz0123456789";
+
+    for (var i = 0; i < num; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+
+    return text;
 }

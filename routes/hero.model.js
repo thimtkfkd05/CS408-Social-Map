@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const heroSchema = new Schema(
     {
-        id: { type: Number, required: true, unique: true },
+        id: { type: String, required: true, unique: true },
         Allday: Boolean,
         description: String,
         place : Array,
