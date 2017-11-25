@@ -7,10 +7,11 @@ const heroSchema = new Schema(
         id: { type: String, required: true, unique: true },
         Allday: Boolean,
         description: String,
-        place : Array,
+        place : Object,
         end: String,
         start: String,
-        title: String
+        title: String,
+        user_id: String
     },
     {
         collection: 'Heroes'
