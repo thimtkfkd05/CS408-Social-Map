@@ -102,8 +102,7 @@ exports.event_save = function(req, res) {
                 });
             }
         });
-    }
-    else if (req.body.events && req.body.events.length) {
+    } else if (req.body.events && req.body.events.length) {
         var events = req.body.events;
         db_event.insertMany(events, function(err, result) {
             res.json({

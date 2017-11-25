@@ -22,6 +22,7 @@ $(document).on('click',".save",function (e) {
         data['description'] = document.getElementById("description").value;
         data['place'] = marker_locate;
         data['id'] = make_random_string(26);
+        data['user_id'] = gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getId();
         console.log(data);
 
         $.post('/event_save', data, function(result) {
