@@ -1,3 +1,4 @@
+<meta name="google-signin-scope" content="profile https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.readonly">
 <meta name="google-signin-client_id" content="468607746966-bqb4r002gsu8oavgsn2igh5hntoa295j.apps.googleusercontent.com">
 <script src="https://apis.google.com/js/platform.js" async defer></script>
 <div id="header">
@@ -22,8 +23,9 @@
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
 				<li>
-					<a href="/auth/google_login"><i class="fa fa-user-o"></i> Login</a>
-				    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+					<!-- <a href="/auth/google_login"><i class="fa fa-user-o"></i> Login</a> -->
+                    <a href="" id="login"><i class="fa fa-user-o"></i> Login</a>
+				    <div class="g-signin2" data-onsuccess="onSignIn" style="display: none;"></div>
                 </li>
 				<li>
 					<a href=""><i class="fa fa-cog"></i> Settings</a>
@@ -33,3 +35,19 @@
 	</div>
     <div class="col-xs-1"></div>
 </div>
+<script>
+    function onSignIn(googleUser) {
+        console.log(googleUser);
+        var id_token = googleUser.getAuthResponse().id_token;
+        console.log(googleUser);
+        console.log(id_token);
+        var profile = googleUser.getBasicProfile();
+        console.log(profile.getId(), profile.getName(), profile.getEmail());
+    };
+    $(document).ready(function() {
+        $('#login').click(function() {
+            $('.g-signin2 > div').click();
+            console.log("clicked");
+        });
+    });
+</script>
