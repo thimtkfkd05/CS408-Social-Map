@@ -36,8 +36,7 @@ $(document).on('click',".save",function (e) {
 
 $(document).on('click',".remove",function (e) {
 
-}
-}
+});
 
 function initialize() {
     var myOptions = {
