@@ -112,3 +112,41 @@ exports.event_save = function(req, res) {
         });
     }
 };
+
+exports.one_get = function (req,res) {
+    var db_event = req.app.get('db').collection('Heroes');
+    db_event.findOne({
+        id: req.query.id
+    },function(err,result) {
+        console.log(result, req.query.id);
+        if (!err) {
+            res.render('calendardata.html', result);
+        }
+    else {
+            console.log("error in one_get function: ", err);
+        }
+    });
+};
+
+exports.one_event = function(req, res) {
+    var db_event = req.app.get('db').collection('Heroes');
+    db_event.findOne({
+        id: req.params.id
+    },function(err,result) {
+        console.log(result, req.query.id);
+        if (!err) {
+            res.render('calendardata.html', {
+                title: result.title || '',
+                start: result.start || '',
+                end: result.end || '',
+                Allday: result.Allday || false,
+                place: result.place || {lat: null, lng: null},
+                description: result.description || '',
+                open: result.open || false
+            });
+        }
+        else {
+            console.log("error in one_get function: ", err);
+        }
+    });
+};

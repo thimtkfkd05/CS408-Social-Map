@@ -35,9 +35,6 @@ $(document).on('click',".save",function (e) {
     }
 })
 
-$(document).on('click',".remove",function (e) {
-
-});
 
 function initialize() {
     var myOptions = {
@@ -50,17 +47,21 @@ function initialize() {
         if(marker){
             deleteMarker();
         }
-        placeMarker(event.latLng);
-        marker_locate["latitude"] = event.latLng.lat();
-        marker_locate["longitude"] = event.latLng.lng();
+        var location = {
+            lat: event.latLng.lat(),
+            lng: event.latLng.lng()
+        };
+        placeMarker(location);
     });
 }
 
 function placeMarker(location) {
-        marker = new google.maps.Marker({
-            position: location,
-            map: map
-        });
+    marker = new google.maps.Marker({
+        position: location,
+        map: map
+    });
+    map.setCenter(marker.getPosition());
+    marker_locate = location;
 }
 
 function deleteMarker(){

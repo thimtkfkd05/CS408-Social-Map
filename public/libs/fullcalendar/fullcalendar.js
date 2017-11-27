@@ -17802,7 +17802,7 @@ var ListViewGrid = Grid.extend({
             '></i> Export' +
             '</a>' +
 
-			'<a class="modification_btn" data-id="' + htmlEscape(eventDef.id || '') + '">' +
+			'<a href="/one_event/' + htmlEscape(eventDef.id || '') + '" class="modification_btn" data-id="' + htmlEscape(eventDef.id || '') + '">' +
             '<i class="fa fa-pencil-square-o"' +
             (bgColor ? ' style="background-color:' + bgColor + '"' : '') +
             '></i> modify' +

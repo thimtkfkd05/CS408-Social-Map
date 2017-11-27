@@ -97,6 +97,21 @@
             format: 'YYYY/MM/DD hh:mm',
             useCurrent: true
         });
+        var title = '<%= title %>';
+        var Allday = '<%- Allday %>';
+        var description = '<%= description %>';
+        var place = '<%- place %>';
+        var end = '<%= end %>';
+        var start = '<%= start %>';
+        console.log("DEBUG: ", title, Allday, description, place, end, start);
+        $('#title').val(title);
+        $('#description').val(description);
+        $('#inlineCheckbox1').attr('checked', Allday);
+        start && $('#datetimepicker1').data('DateTimePicker').date(start);
+        end && $('#datetimepicker2').data('DateTimePicker').date(end);
+        if (place && place.lat && place.lng) {
+            placeMarker(place);
+        }
     });
 </script>
 </html>
