@@ -11,7 +11,8 @@ const heroSchema = new Schema(
         end: String,
         start: String,
         title: String,
-        user_id: String
+        user_id: String,
+        open: Boolean
     },
     {
         collection: 'Heroes'
