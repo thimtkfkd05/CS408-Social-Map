@@ -153,7 +153,8 @@ exports.one_event = function(req, res) {
                 Allday: result.Allday || false,
                 place: result.place || {lat: null, lng: null},
                 description: result.description || '',
-                open: result.open || false
+                open: result.open || false,
+                id: result.id || ''
             });
         }
         else {

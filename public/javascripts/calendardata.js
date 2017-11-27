@@ -16,12 +16,13 @@ $(document).on('click',".save",function (e) {
     }
     else {
         data['title'] = document.getElementById("title").value;
-        data['start'] = new Date(start_picker.date).toISOString()
-        data['end'] = new Date(end_picker.date).toISOString()
+        data['start'] = new Date(start_picker.date).toISOString();
+        data['end'] = new Date(end_picker.date).toISOString();
         data['Allday'] = $("#inlineCheckbox1").prop("checked");
         data['description'] = document.getElementById("description").value;
         data['place'] = marker_locate;
-        data['id'] = make_random_string(26);
+        data['id'] = $(this).data('id') || make_random_string(26);
+
         data['user_id'] = gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getId();
         console.log(data);
 
