@@ -3,7 +3,12 @@ var marker_locate = [];
 var place = {lat: 36.374077, lng: 127.365463};
 var map;
 var marker;
-
+var id;
+try {
+    id = new URL(location.href).searchParams.get('id');
+} catch(e) {
+    id = '';
+}
 
 $(document).on('click',".save",function (e) {
     var start_picker = $('#datetimepicker1').data();
@@ -21,8 +26,8 @@ $(document).on('click',".save",function (e) {
         data['Allday'] = $("#inlineCheckbox1").prop("checked");
         data['description'] = document.getElementById("description").value;
         data['place'] = marker_locate;
-        data['id'] = $(this).data('id') || make_random_string(26);
-
+        data['id'] = id || make_random_string(26);
+        data['open'] = $('#open').attr('checked') || false;
         data['user_id'] = gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getId();
         console.log(data);
 
@@ -34,7 +39,24 @@ $(document).on('click',".save",function (e) {
             }
         });
     }
-})
+});
+
+$(document).on('click', '.remove', function() {
+    if (id) {
+        $.post('/event_remove', {
+            id: id,
+            user_id: gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getId()
+        }, function(remove_err) {
+            if (remove_err) {
+                console.log(remove_err);
+                alert("Schedule not removed. Try again.");
+            }
+            else location.replace('/calendar');
+        });
+    } else {
+        alert("You can't remove new schedule.");
+    }
+});
 
 
 function initialize() {

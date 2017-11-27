@@ -87,9 +87,8 @@
                     id_token: auth.id_token,
                     access_token: auth.access_token
                 }, function(result) {
-                    console.log("id_token: ", auth.id_token);
-                    console.log("access_token: ", auth.access_token);
-                    updateSigninStatus(result && auth2.isSignedIn.get()); 
+                    updateSigninStatus(result && auth2.isSignedIn.get());
+                    location.reload(); 
                 });
             });
         });
@@ -98,6 +97,7 @@
             var auth2 = gapi.auth2.getAuthInstance();
             auth2.signOut().then(function() {
                 updateSigninStatus(auth2.isSignedIn.get());
+                location.reload();
             });
         });
     });

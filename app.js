@@ -39,6 +39,7 @@ app.get('/calendardata', routes.calendardata);
 app.get('/event_get', routes.event_get);
 app.post('/auth/google_user', routes.google_user);
 app.post('/event_save', routes.event_save);
+app.post('/event_remove', routes.event_remove);
 app.get('/one_get', routes.one_get);
 app.get('/one_event/:id', routes.one_event);
 app.get('/https_get', function(req, res) {

@@ -97,17 +97,15 @@
             format: 'YYYY/MM/DD hh:mm',
             useCurrent: true
         });
-        var edit = '<%= id %>';
-        if (edit) {
-            var id = '<%= id %>';
-            var title = '<%= title %>';
+
+        var title = '<%= title %>';
+        if (title) {
             var Allday = '<%- Allday %>';
             var description = '<%= description %>';
             var place = '<%- place %>';
             var end = '<%= end %>';
             var start = '<%= start %>';
-            console.log("DEBUG: ", title, Allday, description, place, end, start);
-            $('.save').data('id', id);
+            
             $('#title').val(title);
             $('#description').val(description);
             $('#inlineCheckbox1').attr('checked', Allday);

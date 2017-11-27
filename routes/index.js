@@ -124,18 +124,11 @@ exports.event_save = function(req, res) {
     }
 };
 
-exports.one_get = function (req,res) {
+exports.remove_event = function(req, res) {
     var db_event = req.app.get('db').collection('Heroes');
-    db_event.findOne({
-        id: req.query.id
-    },function(err,result) {
-        console.log(result, req.query.id);
-        if (!err) {
-            res.render('calendardata.html', result);
-        }
-    else {
-            console.log("error in one_get function: ", err);
-        }
+    db_event.remove(req.body, function(err, result) {
+        if (err) console.log(err);
+        res.json(err);
     });
 };
 
@@ -154,7 +147,6 @@ exports.one_event = function(req, res) {
                 place: result.place || {lat: null, lng: null},
                 description: result.description || '',
                 open: result.open || false,
-                id: result.id || ''
             });
         }
         else {
