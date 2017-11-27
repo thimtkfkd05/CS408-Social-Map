@@ -39,8 +39,10 @@ exports.google_user = function(req, res) {
             db_user.update({
                 id: user_info.id
             }, {
-                id_token: user_info.id_token,
-                access_token: user_info.access_token
+                $set: {
+                    id_token: user_info.id_token,
+                    access_token: user_info.access_token
+                }
             }, function(update_err, update_ok) {
                 if (update_err) {
                     console.log(update_err);
@@ -80,9 +82,18 @@ exports.event_save = function(req, res) {
             id: event_data.id
         }, function(find_err, find_result) {
             if (find_result) {
-                db_event.updateOne({
+                db_event.update({
                     id: event_data.id
-                }, event_data, function(update_err, result) {
+                }, {
+                    $set: {
+                        title: event_data.title,
+                        start: event_data.start,
+                        end: event_data.end,
+                        Allday: event_data.Allday,
+                        description: event_data.description,
+                        place: event_data.place
+                    }
+                }, function(update_err, result) {
                     res.json({
                         err: update_err,
                         result: result
