@@ -124,7 +124,7 @@ exports.event_save = function(req, res) {
     }
 };
 
-exports.remove_event = function(req, res) {
+exports.event_remove = function(req, res) {
     var db_event = req.app.get('db').collection('Heroes');
     db_event.remove(req.body, function(err, result) {
         if (err) console.log(err);
