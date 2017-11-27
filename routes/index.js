@@ -15,8 +15,8 @@ exports.events = function(req, res){
     res.render('recommendation.html');
 };
 
-exports.calendardata = function(req, res){
-    res.render('calendardata.html');
+exports.event_new = function(req, res){
+    res.render('calendardata.new.html');
 };
 
 exports.google_user = function(req, res) {
@@ -132,14 +132,14 @@ exports.event_remove = function(req, res) {
     });
 };
 
-exports.one_event = function(req, res) {
+exports.event_edit = function(req, res) {
     var db_event = req.app.get('db').collection('Heroes');
     db_event.findOne({
         id: req.params.id
     },function(err,result) {
         console.log(result, req.query.id);
         if (!err) {
-            res.render('calendardata.html', {
+            res.render('calendardata.edit.html', {
                 title: result.title || '',
                 start: result.start || '',
                 end: result.end || '',

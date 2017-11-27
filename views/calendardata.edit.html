@@ -25,7 +25,7 @@
         <span id ="button-span" class="col-xs-10">
             <div class="contents">
                 <div class="row">
-                    <button type="button" class="btn btn-default">
+                    <button type="button" class="btn btn-default goback">
                         <span class = 'glyphicon glyphicon-arrow-left' aria-hidden="true"></span>
                         되돌아가기
                     </button>
@@ -98,8 +98,8 @@
             useCurrent: true
         });
 
-        var title = '<%= title %>';
-        if (title) {
+        if (new URL(location.href).searchParams.get('id')) {
+            var title = '<%= title %>';
             var Allday = '<%- Allday %>';
             var description = '<%= description %>';
             var place = '<%- place %>';
