@@ -56,18 +56,17 @@ $(window).on('load', function() {
     } else {
         init_calendar();
     }
+});
 
 $(document).on('click','.map-view', function () {
     var id = $(this).data('id');
-        full_event.some(function (t) {
-            if (t.id == id) {
-                place = t.place;
-                return true;
-            } else {
-                return false;
-            }
-        });
-
+    full_event.some(function (t) {
+        if (t.id == id) {
+            place = t.place;
+            return true;
+        } else {
+            return false;
+        }
     });
 
     $('#mapModal').on('shown.bs.modal',function () {
