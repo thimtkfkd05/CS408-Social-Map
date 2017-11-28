@@ -80,6 +80,12 @@ function initialize() {
 }
 
 function placeMarker(location) {
+    if (location.lat && typeof(location.lat) === 'string') {
+        location = {
+            lat: Number(location.lat),
+            lng: Number(location.lng)
+        };
+    }
     marker = new google.maps.Marker({
         position: location,
         map: map
