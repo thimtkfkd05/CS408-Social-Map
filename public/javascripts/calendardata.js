@@ -3,12 +3,11 @@ var marker_locate = [];
 var place = {lat: 36.374077, lng: 127.365463};
 var map;
 var marker;
-var id;
-try {
-    id = new URL(location.href).searchParams.get('id');
-} catch(e) {
-    id = '';
-}
+var id = new URL(location.href).searchParams.get('id') || '';
+
+$(document).on('click', '.goback', function() {
+    location.replace('/calendar');
+});
 
 $(document).on('click',".save",function (e) {
     var start_picker = $('#datetimepicker1').data();
@@ -36,6 +35,7 @@ $(document).on('click',".save",function (e) {
                 console.log(result.err);
             } else {
                 console.log(result.result);
+                location.replace('/calendar');
             }
         });
     }

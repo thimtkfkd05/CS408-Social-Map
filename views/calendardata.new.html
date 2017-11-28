@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<script src= "/libs/jquery/jquery.js"></script>
+<script src= "/libs/bootstrap/js/bootstrap.js"></script>
+<script src= "/libs/moment/moment-with-locales.min.js"></script>
+<script src= "/libs/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script src= "/libs/fullcalendar/fullcalendar.js"></script>
+<link rel = "stylesheet" href="/libs/font-awesome/css/font-awesome.css">
+<link rel = "stylesheet" href = "/libs/bootstrap/css/bootstrap.css">
+<link rel = "stylesheet" href = "/libs/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css">
+<link rel = "stylesheet" href = "/libs/fullcalendar/fullcalendar.css">
+<link rel = "stylesheet" href = "/stylesheets/header.css">
+<link rel = "stylesheet" href = "/stylesheets/calendardata.css">
+<head>
+    <meta charset="UTF-8">
+    <title>calendar</title>
+</head>
+<body>
+<header>
+    <%- include header %>
+</header>
+<section>
+    <div class="container">
+        <span class="col-xs-1"></span>
+        <span id ="button-span" class="col-xs-10">
+            <div class="contents">
+                <div class="row">
+                    <button type="button" class="btn btn-default goback">
+                        <span class = 'glyphicon glyphicon-arrow-left' aria-hidden="true"></span>
+                        되돌아가기
+                    </button>
+                    <button type="button" class="btn btn-default save">
+                        <span class = 'glyphicon glyphicon-ok' aria-hidden="true"></span>
+                        저장
+                    </button>
+                    <button type="button" class="btn btn-default remove">
+                        <span class = 'glyphicon glyphicon-trash' aria-hidden="true"></span>
+                        삭제
+                    </button>
+                </div>
+                <div id ="title-span" class="title-container row">
+
+                    <span class="col-xs-1 title">Title</span>
+                    <input id="title" type="text" class="form-control title-input col-xs-5" name="msg" placeholder="일정 제목">
+                </div>
+                <div class="row">
+                    <span class="col-xs-1 title">Start</span>
+                    <div class='col-xs-4 time-container-wrapper'>
+                        <div class="time-container form-group">
+                            <div class='input-group date' id='datetimepicker1'>
+                                <input type='text' class="form-control">
+                                <span class="input-group-addon">
+                                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <span class="col-xs-1 title">End</span>
+                    <div class='col-xs-4 time-container-wrapper'>
+                        <div class="time-container form-group">
+                            <div class='input-group date' id='datetimepicker2'>
+                                <input type='text' class="form-control">
+                                <span class="input-group-addon">
+                                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class='col-xs-2 all-day'>
+                        <label class='checkbox-inline' for = "inlineCheckbox1" >
+                            <input type="checkbox" id="inlineCheckbox1" value="option1"> All day
+                        </label>
+                    </div>
+                </div>
+
+                <div class='row'>
+                    <textarea class ='explain form-control' id ="description">
+                    </textarea>
+                </div>
+
+                <div class="row">
+                    <div id="marker"></div>
+                </div>
+
+            </div>
+        </span>
+    </div>
+</section>
+
+</body>
+<script src= "/javascripts/calendar.js"></script>
+<script src= "/javascripts/calendardata.js"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVhAysUuLePfYO9EKf-de-XBfzU2Vg1fk&callback=initialize"></script>
+<script>
+    $(document).ready(function () {
+        $('#datetimepicker1,#datetimepicker2').datetimepicker({
+            format: 'YYYY/MM/DD hh:mm',
+            useCurrent: true
+        });
+    });
+</script>
+</html>
