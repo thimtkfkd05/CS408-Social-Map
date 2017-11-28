@@ -17603,7 +17603,7 @@ var ListViewGrid = Grid.extend({
 				// detect when footprint won't go fully into the next day,
 				// and mutate the latest seg to the be the end.
 				if (
-					!seg.isEnd && !footprint.isAllDay &&
+					!seg.isEnd && !footprint.isAllDay && dayRanges[dayIndex + 1] &&
 					footprint.unzonedRange.endMs < dayRanges[dayIndex + 1].startMs + view.nextDayThreshold
 				) {
 					seg.endMs = footprint.unzonedRange.endMs;
