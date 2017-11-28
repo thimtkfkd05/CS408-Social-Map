@@ -302,18 +302,3 @@ $(document).on('click', '.export_btn', function() {
         });
     });
 });
-
-$(document).on('click', '.modification_btn', function() {
-    console.log(this);
-    var clicked_event_id = $(this).data("id");
-    console.log(clicked_event_id);
-    var result = full_event.filter(function(v) {
-        return v.id === clicked_event_id; // Filter out the appropriate one
-    });
-
-    console.log(clicked_event_id);
-    $.get('/one_get', {
-        id: clicked_event_id
-    });
-
-});

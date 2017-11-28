@@ -98,22 +98,20 @@
             useCurrent: true
         });
 
-        if (new URL(location.href).searchParams.get('id')) {
-            var title = '<%= title %>';
-            var Allday = '<%- Allday %>';
-            var description = '<%= description %>';
-            var place = '<%- place %>';
-            var end = '<%= end %>';
-            var start = '<%= start %>';
-            
-            $('#title').val(title);
-            $('#description').val(description);
-            $('#inlineCheckbox1').attr('checked', Allday);
-            start && $('#datetimepicker1').data('DateTimePicker').date(start);
-            end && $('#datetimepicker2').data('DateTimePicker').date(end);
-            if (place && place.lat && place.lng) {
-                placeMarker(place);
-            }
+        var title = '<%= title %>';
+        var Allday = '<%- Allday %>';
+        var description = '<%= description %>';
+        var place = '<%- place %>';
+        var end = '<%= end %>';
+        var start = '<%= start %>';
+        
+        $('#title').val(title);
+        $('#description').val(description);
+        $('#inlineCheckbox1').attr('checked', Allday);
+        start && $('#datetimepicker1').data('DateTimePicker').date(start);
+        end && $('#datetimepicker2').data('DateTimePicker').date(end);
+        if (place && place.lat && place.lng) {
+            placeMarker(place);
         }
     });
 </script>
