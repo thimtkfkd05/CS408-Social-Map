@@ -46,16 +46,30 @@ $(window).on('load', function() {
         });
     };
    
-    if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
-        $.get('/event_get', {
-            user_id: gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getId()
-        }, function(events) {
-            full_event = events;
+    var check_sign = setInterval(function() {
+        var check = false;
+        try {
+            check = !!gapi.auth2.getAuthInstance();
+        } catch(e) {}
+
+        if (check) {
+            init_events();
+        }
+    }, 100);
+
+    var init_events = function() {
+        clearInterval(check_sign);
+        if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
+            $.get('/event_get', {
+                user_id: gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getId()
+            }, function(events) {
+                full_event = events;
+                init_calendar();
+            });
+        } else {
             init_calendar();
-        });
-    } else {
-        init_calendar();
-    }
+        }
+    };
 });
 
 $(document).on('click','.map-view', function () {
