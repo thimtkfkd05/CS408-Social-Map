@@ -73,13 +73,17 @@ td .fc-today.selected{
     border-radius: 5px;
 }
 
-.map-view,.export_btn {
+.map-view,.export_btn,.modification_btn {
     cursor: pointer;
 }
-.map-view + .export_btn {
+.map-view + .export_btn + .modification_btn{
     margin-left: 10px;
 }
 .export_btn:only-child {
+    float: right;
+}
+
+.modification_btn:only-child{
     float: right;
 }
 

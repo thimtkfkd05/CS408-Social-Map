@@ -1,7 +1,58 @@
 <meta name="google-signin-scope" content="profile https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.readonly">
 <meta name="google-signin-client_id" content="468607746966-bqb4r002gsu8oavgsn2igh5hntoa295j.apps.googleusercontent.com">
-<script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
+<script src="https://apis.google.com/js/platform.js" async defer></script>
 <script src="https://apis.google.com/js/client.js"></script>
+<script>
+    gapi.load('client:auth2', function() {
+        gapi.client.init({
+            apiKey: 'AIzaSyBVhAysUuLePfYO9EKf-de-XBfzU2Vg1fk',
+            clientId: '468607746966-bqb4r002gsu8oavgsn2igh5hntoa295j.apps.googleusercontent.com',
+            scope: 'profile https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.readonly'
+        }).then(function() {
+            gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
+            updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+        });
+    });
+    function updateSigninStatus(status) {
+        if (status) {
+            $('#login').hide();
+            $('#logout').show();
+        } else {
+            $('#logout').hide();
+            $('#login').show();
+        }
+    };
+    function onSignIn(googleUser) {};
+    $(window).on('load', function() {
+        updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+        $('#login').click(function() {
+            var auth2 = gapi.auth2.getAuthInstance();
+            auth2.signIn().then(function() {
+                var googleUser = auth2.currentUser.get();
+                var auth = googleUser.getAuthResponse();
+                var profile = googleUser.getBasicProfile();
+                $.post('/auth/google_user', {
+                    id: profile.getId(),
+                    name: profile.getName(),
+                    email: profile.getEmail(),
+                    id_token: auth.id_token,
+                    access_token: auth.access_token
+                }, function(result) {
+                    updateSigninStatus(result && auth2.isSignedIn.get());
+                    location.reload(); 
+                });
+            });
+        });
+
+        $('#logout').click(function() {
+            var auth2 = gapi.auth2.getAuthInstance();
+            auth2.signOut().then(function() {
+                updateSigninStatus(auth2.isSignedIn.get());
+                location.reload();
+            });
+        });
+    });
+</script>
 <div id="header">
     <div class="col-xs-1"></div>
 	<div class="container col-xs-10">
@@ -24,7 +75,6 @@
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
 				<li>
-					<!-- <a href="/auth/google_login"><i class="fa fa-user-o"></i> Login</a> -->
                     <a id="login"><i class="fa fa-user-o"></i> Login</a>
                     <a id="logout" style="display: none;"><i class="fa fa-user-o"></i> Logout</a>
 				    <div class="g-signin2" data-onsuccess="onSignIn" style="display: none;"></div>
@@ -37,68 +87,3 @@
 	</div>
     <div class="col-xs-1"></div>
 </div>
-<script>
-    function onLoad() {
-        gapi.load('client:auth2', function() {
-            gapi.client.init({
-                apiKey: 'AIzaSyBVhAysUuLePfYO9EKf-de-XBfzU2Vg1fk',
-                clientId: '468607746966-bqb4r002gsu8oavgsn2igh5hntoa295j.apps.googleusercontent.com',
-                scope: 'profile https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.readonly'
-            }).then(function() {
-                gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
-                updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
-            });
-        });
-    };
-    function updateSigninStatus(status) {
-        if (status) {
-            $('#login').hide();
-            $('#logout').show();
-        } else {
-            $('#logout').hide();
-            $('#login').show();
-        }
-    };
-    function onSignIn(googleUser) {
-        var auth = googleUser.getAuthResponse();
-        var profile = googleUser.getBasicProfile();
-        $.post('/auth/google_user', {
-            id: profile.getId(),
-            name: profile.getName(),
-            email: profile.getEmail(),
-            id_token: auth.id_token,
-            access_token: auth.access_token
-        }, function(result) {
-           updateSigninStatus(result); 
-        });
-    };
-    $(window).on('load', function() {
-        updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
-        $('#login').click(function() {
-            var auth2 = gapi.auth2.getAuthInstance();
-            auth2.signIn().then(function() {
-                var googleUser = auth2.currentUser.get();
-                var auth = googleUser.getAuthResponse();
-                var profile = googleUser.getBasicProfile();
-                $.post('/auth/google_user', {
-                    id: profile.getId(),
-                    name: profile.getName(),
-                    email: profile.getEmail(),
-                    id_token: auth.id_token,
-                    access_token: auth.access_token
-                }, function(result) {
-                    console.log("id_token: ", auth.id_token);
-                    console.log("access_token: ", auth.access_token);
-                    updateSigninStatus(result && auth2.isSignedIn.get()); 
-                });
-            });
-        });
-
-        $('#logout').click(function() {
-            var auth2 = gapi.auth2.getAuthInstance();
-            auth2.signOut().then(function() {
-                updateSigninStatus(auth2.isSignedIn.get());
-            });
-        });
-    });
-</script>

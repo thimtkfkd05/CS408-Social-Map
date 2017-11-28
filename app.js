@@ -35,10 +35,12 @@ app.use(errorHandler());
 app.get('/', routes.index);
 app.get('/calendar', routes.calendar);
 app.get('/events', routes.events);
-app.get('/calendardata', routes.calendardata);
+app.get('/event/new', routes.event_new);
 app.get('/event_get', routes.event_get);
 app.post('/auth/google_user', routes.google_user);
 app.post('/event_save', routes.event_save);
+app.post('/event_remove', routes.event_remove);
+app.get('/event/edit/:id', routes.event_edit);
 app.get('/https_get', function(req, res) {
     var _result;
     var option = req.query.option ? req.query.option.split(',') : [];

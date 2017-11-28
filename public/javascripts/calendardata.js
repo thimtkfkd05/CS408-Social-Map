@@ -3,7 +3,12 @@ var marker_locate = [];
 var place = {lat: 36.374077, lng: 127.365463};
 var map;
 var marker;
+var pathname = new URL(location.href).pathname;
+var id = pathname.substring(pathname.lastIndexOf('/')+1, pathname.length) || '';
 
+$(document).on('click', '.goback', function() {
+    location.replace('/calendar');
+});
 
 $(document).on('click',".save",function (e) {
     var start_picker = $('#datetimepicker1').data();
@@ -16,12 +21,13 @@ $(document).on('click',".save",function (e) {
     }
     else {
         data['title'] = document.getElementById("title").value;
-        data['start'] = start_picker.date;
-        data['end'] = end_picker.date;
+        data['start'] = new Date(start_picker.date).toISOString();
+        data['end'] = new Date(end_picker.date).toISOString();
         data['Allday'] = $("#inlineCheckbox1").prop("checked");
         data['description'] = document.getElementById("description").value;
         data['place'] = marker_locate;
-        data['id'] = new Date().getTime();
+        data['id'] = id || make_random_string(26);
+        data['open'] = $('#open').attr('checked') || false;
         data['user_id'] = gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getId();
         console.log(data);
 
@@ -30,19 +36,34 @@ $(document).on('click',".save",function (e) {
                 console.log(result.err);
             } else {
                 console.log(result.result);
+                location.replace('/calendar');
             }
         });
     }
-})
-
-$(document).on('click',".remove",function (e) {
-
 });
+
+$(document).on('click', '.remove', function() {
+    if (id) {
+        $.post('/event_remove', {
+            id: id,
+            user_id: gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getId()
+        }, function(remove_err) {
+            if (remove_err) {
+                console.log(remove_err);
+                alert("Schedule not removed. Try again.");
+            }
+            else location.replace('/calendar');
+        });
+    } else {
+        alert("You can't remove new schedule.");
+    }
+});
+
 
 function initialize() {
     var myOptions = {
         zoom: 15,
-        center: place,
+        center: new google.maps.LatLng(place.lat, place.lng)
     }
     map = new google.maps.Map(document.getElementById("marker"), myOptions);
 
@@ -50,19 +71,40 @@ function initialize() {
         if(marker){
             deleteMarker();
         }
-        placeMarker(event.latLng);
-        marker_locate["latitude"] = event.latLng.lat();
-        marker_locate["longitude"] = event.latLng.lng();
+        var location = {
+            lat: event.latLng.lat(),
+            lng: event.latLng.lng()
+        };
+        placeMarker(location);
     });
 }
 
 function placeMarker(location) {
-        marker = new google.maps.Marker({
-            position: location,
-            map: map
-        });
+    if (location.lat && typeof(location.lat) === 'string') {
+        location = {
+            lat: Number(location.lat),
+            lng: Number(location.lng)
+        };
+    }
+    marker = new google.maps.Marker({
+        position: location,
+        map: map
+    });
+    map.setCenter(marker.getPosition());
+    marker_locate = location;
 }
 
 function deleteMarker(){
     marker.setMap(null);
+}
+
+function make_random_string(num) {
+    var text = "";
+    var possible = "abcdefghijklmnopqrstuvwxyz0123456789";
+
+    for (var i = 0; i < num; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+
+    return text;
 }

@@ -132,3 +132,7 @@ td .fc-today.selected{
     margin-left: auto;
     margin-right: auto;
 }
+
+.open{
+    float: right;
+}

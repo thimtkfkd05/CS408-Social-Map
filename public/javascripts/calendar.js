@@ -46,16 +46,30 @@ $(window).on('load', function() {
         });
     };
    
-    if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
-        $.get('/event_get', {
-            user_id: gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getId()
-        }, function(events) {
-            full_event = events;
+    var check_sign = setInterval(function() {
+        var check = false;
+        try {
+            check = !!gapi.auth2.getAuthInstance();
+        } catch(e) {}
+
+        if (check) {
+            init_events();
+        }
+    }, 100);
+
+    var init_events = function() {
+        clearInterval(check_sign);
+        if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
+            $.get('/event_get', {
+                user_id: gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getId()
+            }, function(events) {
+                full_event = events;
+                init_calendar();
+            });
+        } else {
             init_calendar();
-        });
-    } else {
-        init_calendar();
-    }
+        }
+    };
 });
 
 $(document).on('click','.map-view', function () {
@@ -211,17 +225,6 @@ $(document).on('click', '.import_btn', function() {
     }
 });
 
-function make_random_string(num) {
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-    for (var i = 0; i < num; i++) {
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-    }
-    
-    return text;
-}
-
 $(document).on('click', '.export_btn', function() {
     var id = $(this).data('id');
     var ex_event;
@@ -299,20 +302,3 @@ $(document).on('click', '.export_btn', function() {
         });
     });
 });
-
-// function dropup_active(){
-//     if(dropup == false){
-//         $('.dropup-menu').show({
-//             duration: 500
-//         });
-//         $('.menu i').removeClass('fa-plus').addClass('fa-times');
-//         dropup = true;
-//     }
-//     else{
-//         $('.dropup-menu').hide({
-//             duration: 500
-//         });
-//         $('.menu i').addClass('fa-plus').removeClass('fa-times');
-//         dropup = false;
-//     }
-// }

@@ -15,8 +15,8 @@ exports.events = function(req, res){
     res.render('recommendation.html');
 };
 
-exports.calendardata = function(req, res){
-    res.render('calendardata.html');
+exports.event_new = function(req, res){
+    res.render('calendardata.new.html');
 };
 
 exports.google_user = function(req, res) {
@@ -100,7 +100,7 @@ exports.event_save = function(req, res) {
                     });
                 });
             } else if (!find_err) {
-                db_event.insertOne(event_data, function(err, result) {
+                db_event.insertOne(event_data, function (err, result) {
                     res.json({
                         err: err,
                         result: result
@@ -122,4 +122,35 @@ exports.event_save = function(req, res) {
             });
         });
     }
+};
+
+exports.event_remove = function(req, res) {
+    var db_event = req.app.get('db').collection('Heroes');
+    db_event.remove(req.body, function(err, result) {
+        if (err) console.log(err);
+        res.json(err);
+    });
+};
+
+exports.event_edit = function(req, res) {
+    var db_event = req.app.get('db').collection('Heroes');
+    db_event.findOne({
+        id: req.params.id
+    },function(err,result) {
+        console.log(result, req.query.id);
+        if (!err) {
+            res.render('calendardata.edit.html', {
+                title: result.title || '',
+                start: result.start || '',
+                end: result.end || '',
+                Allday: result.Allday || false,
+                place: result.place || {lat: null, lng: null},
+                description: result.description || '',
+                open: result.open || false,
+            });
+        }
+        else {
+            console.log("error in one_get function: ", err);
+        }
+    });
 };
