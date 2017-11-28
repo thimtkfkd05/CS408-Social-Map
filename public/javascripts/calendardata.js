@@ -3,7 +3,8 @@ var marker_locate = [];
 var place = {lat: 36.374077, lng: 127.365463};
 var map;
 var marker;
-var id = new URL(location.href).searchParams.get('id') || '';
+var pathname = new URL(location.href).pathname;
+var id = pathname.substring(pathname.lastIndexOf('/')+1, pathname.length) || '';
 
 $(document).on('click', '.goback', function() {
     location.replace('/calendar');
