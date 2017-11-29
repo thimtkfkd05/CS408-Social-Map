@@ -63,7 +63,16 @@ $(window).on('load', function() {
             $.get('/event_get', {
                 user_id: gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getId()
             }, function(events) {
-                full_event = events;
+                full_event = events.map(function(item) {
+                    if (item.place) {
+                        item.place = {
+                            lat: Number(item.place.lat),
+                            lng: Number(item.place.lng)
+                        }
+                    }
+
+                    return item;
+                });
                 init_calendar();
             });
         } else {
