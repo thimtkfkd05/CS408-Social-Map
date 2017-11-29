@@ -68,6 +68,13 @@ exports.event_get = function(req, res) {
         if (err) {
             res.json(false);
         } else {
+            results = results.map(function(item) {
+                var start = item.start;
+                var end = item.end;
+                item.start = new Date(new Date(start).getTime() + 3600*9*1000).toISOString();
+                item.end = new Date(new Date(end).getTime() + 3600*9*1000).toISOString();
+                return item;
+            });
             res.json(results);
         }
     });
@@ -141,8 +148,8 @@ exports.event_edit = function(req, res) {
         if (!err) {
             res.render('calendardata.edit.html', {
                 title: result.title || '',
-                start: result.start || '',
-                end: result.end || '',
+                start: result.start ? new Date(new Date(result.start).getTime() + 3600*9*1000).toISOString() : '',
+                end: result.end ? new Date(new Date(result.end).getTime() + 3600*9*1000).toISOString() : '',
                 Allday: result.Allday || false,
                 place: result.place || {lat: null, lng: null},
                 description: result.description || '',

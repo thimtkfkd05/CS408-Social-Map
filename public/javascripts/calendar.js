@@ -113,7 +113,7 @@ function btclick(){
 $(document).on('click', '#import_schedule', function() {
     $('#import_google').on('shown.bs.modal', function() {
         $('#start_date,#end_date').datetimepicker({
-            format: 'YYYY/MM/DD hh:mm',
+            format: 'YYYY/MM/DD HH:mm',
             useCurrent: true
         });
     });
