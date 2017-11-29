@@ -28,7 +28,7 @@ $(document).on('click',".save",function (e) {
         data['place'] = marker_locate;
         data['id'] = id || make_random_string(26);
         data['open'] = $('#open').attr('checked') || false;
-        data['user_id'] = gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getId();
+        data['user_id'] = [gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getId()];
         console.log(data);
 
         $.post('/event_save', data, function(result) {

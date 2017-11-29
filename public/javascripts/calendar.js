@@ -168,7 +168,8 @@ $(document).on('click', '.import_btn', function() {
                                     title: item.summary,
                                     description: item.description || '',
                                     place: item.location || '',
-                                    user_id: gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getId()
+                                    user_id: [gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getId()],
+                                    open: false
                                 };
 
                                 new_events.push(new_item);
