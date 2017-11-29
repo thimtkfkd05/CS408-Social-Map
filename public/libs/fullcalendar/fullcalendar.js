@@ -17791,7 +17791,7 @@ var ListViewGrid = Grid.extend({
             '</a>' +
             '</td>' +
             '<td class="fc-list-item-button ' + theme.getClass('widgetContent') + '">' +
-            (eventDef.place && eventDef.place.lat !== null && eventDef.place.lng !== null) ? '<a class="map-view" data-toggle="modal" data-target="#mapModal" data-id="' + htmlEscape(eventDef.id || '') + '">' +
+            ((eventDef.place && eventDef.place.lat !== null && eventDef.place.lng !== null) ? '<a class="map-view" data-toggle="modal" data-target="#mapModal" data-id="' + htmlEscape(eventDef.id || '') + '">' +
 			'<i class="fa fa-map-marker"' +
             (bgColor ? ' style="background-color:' + bgColor + '"' : '') +
             '></i> View Map' +
