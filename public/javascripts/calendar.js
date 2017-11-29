@@ -113,7 +113,7 @@ function btclick(){
 $(document).on('click', '#import_schedule', function() {
     $('#import_google').on('shown.bs.modal', function() {
         $('#start_date,#end_date').datetimepicker({
-            format: 'YYYY/MM/DD hh:mm',
+            format: 'YYYY/MM/DD HH:mm',
             useCurrent: true
         });
     });
@@ -168,7 +168,8 @@ $(document).on('click', '.import_btn', function() {
                                     title: item.summary,
                                     description: item.description || '',
                                     place: item.location || '',
-                                    user_id: gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getId()
+                                    user_id: [gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getId()],
+                                    open: false
                                 };
 
                                 new_events.push(new_item);

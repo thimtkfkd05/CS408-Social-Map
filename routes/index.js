@@ -68,6 +68,13 @@ exports.event_get = function(req, res) {
         if (err) {
             res.json(false);
         } else {
+            results = results.map(function(item) {
+                var start = item.start;
+                var end = item.end;
+                item.start = new Date(new Date(start).getTime() + 3600*9*1000).toISOString();
+                item.end = new Date(new Date(end).getTime() + 3600*9*1000).toISOString();
+                return item;
+            });
             res.json(results);
         }
     });
@@ -82,9 +89,7 @@ exports.event_save = function(req, res) {
             id: event_data.id
         }, function(find_err, find_result) {
             if (find_result) {
-                db_event.update({
-                    id: event_data.id
-                }, {
+                var update_option = {
                     $set: {
                         title: event_data.title,
                         start: event_data.start,
@@ -93,7 +98,16 @@ exports.event_save = function(req, res) {
                         description: event_data.description,
                         place: event_data.place
                     }
-                }, function(update_err, result) {
+                };
+
+                if (event_data.user_id && find_result.user_id.indexOf(event_data.user_id) < 0) {
+                    update_option['$push'] = {
+                        user_id: event_data.user_id
+                    }
+                }
+                db_event.update({
+                    id: event_data.id
+                }, update_option, function(update_err, result) {
                     res.json({
                         err: update_err,
                         result: result
@@ -113,7 +127,7 @@ exports.event_save = function(req, res) {
                 });
             }
         });
-    } else if (req.body.events && req.body.events.length) {
+    } else if (req.body.events && req.body.events.length) { // for import events from google calendar
         var events = req.body.events;
         db_event.insertMany(events, function(err, result) {
             res.json({
@@ -141,8 +155,8 @@ exports.event_edit = function(req, res) {
         if (!err) {
             res.render('calendardata.edit.html', {
                 title: result.title || '',
-                start: result.start || '',
-                end: result.end || '',
+                start: result.start ? new Date(new Date(result.start).getTime() + 3600*9*1000).toISOString() : '',
+                end: result.end ? new Date(new Date(result.end).getTime() + 3600*9*1000).toISOString() : '',
                 Allday: result.Allday || false,
                 place: result.place || {lat: null, lng: null},
                 description: result.description || '',
