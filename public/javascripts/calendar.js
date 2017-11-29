@@ -220,6 +220,8 @@ $(document).on('click', '.import_btn', function() {
                                         $('#start_date input,#end_date input').val('');
                                         start_picker.DateTimePicker.destroy();
                                         end_picker.DateTimePicker.destroy();
+
+                                        location.reload();
                                     }
                                 });
                             });

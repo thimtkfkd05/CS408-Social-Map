@@ -26,7 +26,7 @@ $(document).on('click',".save",function (e) {
         data['Allday'] = $("#inlineCheckbox1").prop("checked");
         data['description'] = document.getElementById("description").value;
         data['place'] = marker_locate;
-        data['id'] = id || make_random_string(26);
+        data['id'] = id !== 'new' ? id : make_random_string(26);
         data['open'] = $('#open').attr('checked') || false;
         data['user_id'] = [gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getId()];
         console.log(data);
