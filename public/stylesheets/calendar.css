@@ -73,18 +73,14 @@ td .fc-today.selected{
     border-radius: 5px;
 }
 
-.map-view,.export_btn,.modification_btn {
-    cursor: pointer;
+.fc-list-item-button {
+    text-align: right;
 }
-.map-view + .export_btn + .modification_btn{
+.fc-list-item-button > a + a {
     margin-left: 10px;
 }
-.export_btn:only-child {
-    float: right;
-}
-
-.modification_btn:only-child{
-    float: right;
+.fc-list-item-button > a {
+    cursor: pointer;
 }
 
 .floating_menu{
@@ -113,6 +109,10 @@ td .fc-today.selected{
     position: absolute;
     right: 14px;
     top: 14px;
+}
+
+.floating_menu > button a {
+    cursor: pointer;
 }
 
 #import_google .modal-content {
