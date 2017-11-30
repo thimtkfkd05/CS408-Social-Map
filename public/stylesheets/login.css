@@ -1,0 +1,58 @@
+section > .container {
+    position: absolute;
+    top: 50px;
+    padding-top: 15px;
+    width: 100%;
+}
+
+.introduction {
+    margin-top : 10px;
+}
+
+.display_intro{
+    display: block;
+    font-size: 4em;
+    -webkit-margin-before: 0.67em;
+    -webkit-margin-after: 0.67em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.main {
+    margin-top :30px;
+    height: 300px;
+    width : 50%;
+    display: block;
+    margin-right: auto;
+    margin-left : auto;
+}
+
+.jumbotron p{
+    text-align: center;
+    display: block;
+    -webkit-margin-before: 1em;
+    -webkit-margin-after: 1em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+    font-size : 1em;
+}
+
+.g-signin2{
+    width: 100%;
+}
+
+.g-signin2 > div{
+    margin: 0 auto;
+    margin-top: 50px;
+}
+
+section{
+    padding-top : 130px;
+    height: 600px;
+}
+
+section .jumbotron{
+    height: 100%;
+}

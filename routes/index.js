@@ -19,6 +19,10 @@ exports.event_new = function(req, res){
     res.render('calendardata.new.html');
 };
 
+exports.login = function(req, res){
+    res.render('login.html');
+};
+
 exports.google_user = function(req, res) {
     var db_user = req.app.get('db').collection('Users');
     var user_info = req.body;   
@@ -63,7 +67,7 @@ exports.event_get = function(req, res) {
     var db_event = req.app.get('db').collection('Heroes');
 
     db_event.find({
-        user_id: req.query.user_id
+        user_id: req.session.user_id
     }).toArray(function(err, results) {
         if (err) {
             res.json(false);
@@ -85,6 +89,7 @@ exports.event_save = function(req, res) {
 
     if (req.body.id) {
         var event_data = req.body;
+        event_data.user_id = req.session.user_id;
         db_event.findOne({
             id: event_data.id
         }, function(find_err, find_result) {
@@ -170,13 +175,11 @@ exports.event_edit = function(req, res) {
 };
 
 exports.get_open_event = function(req, res) {
-    console.log(req.user, res.locals);
-    req.user = '1234';
     var db_event = req.app.get('db').collection('Heroes');
     db_event.find({
         open: true,
         user_id: {
-            $ne: req.query.user_id
+            $ne: req.session.user_id
         }
     }, {
         _id: 0

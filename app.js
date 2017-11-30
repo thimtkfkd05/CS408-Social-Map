@@ -20,18 +20,23 @@ var app = express();
 var port = process.env.PORT || 3000;
 
 var auth_google_id = function(req, res, next) {
-    req.session.user_id = req.body.id;
-    next();
+    if (!req.session.user_id) {
+        req.session.user_id = req.body.id;
+        next();
+    } else {
+        res.json(false);
+    }
 };
 var clear_google_id = function(req, res, next) {
     req.session.destroy(function(err) {
-        next();
+        if (err) next();
+        else res.redirect('/login');
     });
 };
 
 var check = function(req, res, next) {
     if (!req.session.user_id) {
-        res.redirect('/calendar');//'/login');
+        res.redirect('/login');
     } else {
         next();
     }
@@ -57,7 +62,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(errorHandler());
 
 app.get('/', check, routes.index);
-app.get('/calendar', routes.calendar);
+app.get('/calendar', check, routes.calendar);
+app.get('/login', routes.login);
 app.get('/events', check, routes.events);
 app.get('/event/new', check, routes.event_new);
 app.get('/event_get', check, routes.event_get);

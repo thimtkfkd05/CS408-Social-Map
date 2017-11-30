@@ -9,8 +9,12 @@
             clientId: '468607746966-bqb4r002gsu8oavgsn2igh5hntoa295j.apps.googleusercontent.com',
             scope: 'profile https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.readonly'
         }).then(function() {
-            gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
-            updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+            var auth2 = gapi.auth2.getAuthInstance();
+            auth2.isSignedIn.listen(updateSigninStatus);
+            updateSigninStatus(auth2.isSignedIn.get());
+            if (auth2.isSignedIn.get()) {
+                passUserInfo(auth2);
+            }
         });
     });
     function updateSigninStatus(status) {
@@ -23,33 +27,43 @@
         }
     };
     function onSignIn(googleUser) {};
+    function passUserInfo(auth2) {
+        updateSigninStatus(auth2.isSignedIn.get());
+        var googleUser = auth2.currentUser.get();
+        var auth = googleUser.getAuthResponse();
+        var profile = googleUser.getBasicProfile();
+        $.post('/auth/google_user', {
+            id: profile.getId(),
+            name: profile.getName(),
+            email: profile.getEmail(),
+            id_token: auth.id_token,
+            access_token: auth.access_token
+        }, function(result) {
+            if (result) location.href = '/';
+        });
+    };
+    function signIn(auth2) {
+        auth2.signIn().then(function() {
+            passUserInfo(auth2);
+        });
+    };
     $(window).on('load', function() {
         updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+        var auth2 = gapi.auth2.getAuthInstance();
+        if (auth2.isSignedIn.get()) {
+            passUserInfo(auth2);
+        }
         $(document).on('click', '#login', function() {
             var auth2 = gapi.auth2.getAuthInstance();
-            auth2.signIn().then(function() {
-                var googleUser = auth2.currentUser.get();
-                var auth = googleUser.getAuthResponse();
-                var profile = googleUser.getBasicProfile();
-                $.post('/auth/google_user', {
-                    id: profile.getId(),
-                    name: profile.getName(),
-                    email: profile.getEmail(),
-                    id_token: auth.id_token,
-                    access_token: auth.access_token
-                }, function(result) {
-                    updateSigninStatus(result && auth2.isSignedIn.get());
-                    location.reload(); 
-                });
-            });
+            signIn(auth2);
         });
 
         $(document).on('click', '#logout', function() {
             var auth2 = gapi.auth2.getAuthInstance();
             auth2.signOut().then(function() {
                 updateSigninStatus(auth2.isSignedIn.get());
-                $.post('/auth/google_user/logout', {}, function(err) {
-                    location.reload();
+                $.post('/auth/google_user/logout', {}, function(result) {
+                    if (result) location.href = '/login';
                 });
             });
         });
