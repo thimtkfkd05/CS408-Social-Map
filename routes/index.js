@@ -19,6 +19,10 @@ exports.event_new = function(req, res){
     res.render('calendardata.new.html');
 };
 
+exports.login = function(req, res){
+    res.render('login.html');
+};
+
 exports.google_user = function(req, res) {
     var db_user = req.app.get('db').collection('Users');
     var user_info = req.body;   
