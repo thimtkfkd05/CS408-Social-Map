@@ -11,6 +11,7 @@
     "ejs": "*",
     "errorhandler": "^1.5.0",
     "express": "^4.16.1",
+    "express-session": "^1.15.6",
     "googleapis": "^22.2.0",
     "method-override": "^2.3.10",
     "mongoose": "^4.13.2",

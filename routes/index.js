@@ -152,7 +152,6 @@ exports.event_edit = function(req, res) {
     db_event.findOne({
         id: req.params.id
     },function(err,result) {
-        console.log(result, req.query.id);
         if (!err) {
             res.render('calendardata.edit.html', {
                 title: result.title || '',
@@ -166,6 +165,28 @@ exports.event_edit = function(req, res) {
         }
         else {
             console.log("error in one_get function: ", err);
+        }
+    });
+};
+
+exports.get_open_event = function(req, res) {
+    console.log(req.user, res.locals);
+    req.user = '1234';
+    var db_event = req.app.get('db').collection('Heroes');
+    db_event.find({
+        open: true,
+        user_id: {
+            $ne: req.query.user_id
+        }
+    }, {
+        _id: 0
+    }).toArray(function(err, results) {
+        if (err) {
+            console.log(err);
+            res.json(null);
+        } else {
+            // Add more..?
+            res.json(results);
         }
     });
 };

@@ -1,6 +1,6 @@
 <meta name="google-signin-scope" content="profile https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.readonly">
 <meta name="google-signin-client_id" content="468607746966-bqb4r002gsu8oavgsn2igh5hntoa295j.apps.googleusercontent.com">
-<script src="https://apis.google.com/js/platform.js" async defer></script>
+<script src="https://apis.google.com/js/platform.js"></script>
 <script src="https://apis.google.com/js/client.js"></script>
 <script>
     gapi.load('client:auth2', function() {
@@ -25,7 +25,7 @@
     function onSignIn(googleUser) {};
     $(window).on('load', function() {
         updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
-        $('#login').click(function() {
+        $(document).on('click', '#login', function() {
             var auth2 = gapi.auth2.getAuthInstance();
             auth2.signIn().then(function() {
                 var googleUser = auth2.currentUser.get();
@@ -44,11 +44,13 @@
             });
         });
 
-        $('#logout').click(function() {
+        $(document).on('click', '#logout', function() {
             var auth2 = gapi.auth2.getAuthInstance();
             auth2.signOut().then(function() {
                 updateSigninStatus(auth2.isSignedIn.get());
-                location.reload();
+                $.post('/auth/google_user/logout', {}, function(err) {
+                    location.reload();
+                });
             });
         });
     });
