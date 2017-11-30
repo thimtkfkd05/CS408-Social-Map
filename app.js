@@ -34,6 +34,7 @@ app.use(errorHandler());
 
 app.get('/', routes.index);
 app.get('/calendar', routes.calendar);
+app.get('/login', routes.login);
 app.get('/events', routes.events);
 app.get('/event/new', routes.event_new);
 app.get('/event_get', routes.event_get);
