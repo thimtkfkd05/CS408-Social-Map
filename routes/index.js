@@ -118,6 +118,7 @@ exports.event_save = function(req, res) {
                     });
                 });
             } else if (!find_err) {
+                event_data.user_id = [event_data.user_id];
                 db_event.insertOne(event_data, function (err, result) {
                     res.json({
                         err: err,
