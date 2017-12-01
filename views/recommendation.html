@@ -80,7 +80,53 @@
                 </div>
                 <div class="loader"></div>
             </div>
+
+
         </span>
         <span class="col-xs-1"></span>
     </div>
 </section>
+<!-- Modal -->
+<div class="modal fade" id="datemodal" role="dialog">
+    <div class="modal-dialog col-xs-10">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><i class="fa fa-times"></i></button>
+                <h4 class="modal-title">Join this Event</h4>
+            </div>
+            <div class="modal-body">
+                <div id="select_description" class="alert alert-info">
+                    Select date you want to join.<br>You can select between
+                </div>
+                <div class="date_container">
+                    <div class="row">
+                        <div class="col-xs-1"></div>
+                        <div class="col-xs-10">
+                            <div class="form-group row">
+                                <span class="date_title col-xs-4">Select Date</span>
+                                <div class="input-group date col-xs-8" id="select_date">
+                                    <input type="text" class="form-control" />
+                                    <span class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-1"></div>
+                    </div>
+                    <div class="alert alert-danger warning_msg" style="margin: 15px 0 -5px; display: none;">Select Possible Date!</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="form-group">
+                    <button class="btn btn-success join_btn">Join</button>
+                    <button class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

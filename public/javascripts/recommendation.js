@@ -7,7 +7,7 @@ var card_template = function(e) {
             '<div class="event_desc">',
                 e.description,
             '</div>',
-            '<button class="btn btn-default btn-lg add_event" data-id="' + e.id + '">Join this Event</button>',
+            '<button class="btn btn-default btn-lg' + (e.open_day !== e.close_day ? ' add_event_modal' : ' add_event') + '" data-id="' + e.id + (e.open_day !== e.close_day ? '" data-toggle = "modal" data-target ="#datemodal"' : ' ') + '>Join this Event</button>',
         '</div>'
     ].join('');
 };
@@ -114,6 +114,38 @@ $(document).on('change', '.event_category input[type="checkbox"]', function() {
     make_event_html(shorten_events(events));
 });
 
-$(document).on('click', '.add_event', function() {
-    
+$(document).on('click', '.add_event_modal', function() {
+    $('#datemodal').on('shown.bs.modal', function () {
+        $('#select_date').datetimepicker({
+            format: 'YYYY/MM/DD',
+            useCurrent: true
+        });
+    });
+    var event_id = $(this).data('id');
+    var event_data;
+    all_events.some(function(item) {
+        if (item.id == event_id) {
+            event_data = item;
+            return true;
+        } else return false;
+    });
+    $('#select_description').html($('#select_description').html() + ' ' + event_data.open_day + ' and ' + event_data.close_day);
+
+    $(document).on('click', '.join_btn', function () {
+        var selected_day = $('#select_date').data().date;
+        if (!selected_day || new Date(selected_day) < new Date(event_data.open_day) || new Date(selected_day) > new Date(event_data.close_day)) {
+            $('.warning_msg').show();
+            setTimeout(function () {
+                $('.warning_msg').hide();
+            }, 2000);
+        } else {
+            $.post('/add_open_event', {
+                id: event_id,
+                selected_day: selected_day
+            }, function(err) {
+                if (err) alert('Error ocurred. Please try again.');
+                else location.reload();
+            })
+        }
+    })
 });
