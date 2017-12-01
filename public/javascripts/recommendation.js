@@ -159,3 +159,13 @@ $(document).on('click', '.add_event', function() {
         else location.reload();
     });
 });
+
+$(document).on('click', '#recommend_btn', function() {
+    $.post('/recommend_event', {}, function(recommended_events) {
+        if (!recommended_events) alert('Error ocurred. Please try again.');
+        else {
+            all_events = recommended_events;
+            make_event_html(recommended_events);
+        }
+    })
+});

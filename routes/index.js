@@ -268,7 +268,7 @@ exports.recommend_event = function(req, res) {
         open: true,
         user_id: {
             $ne: req.session.user_id
-        },
+            },
         end: {
             $gt: now_string
         },
@@ -282,12 +282,7 @@ exports.recommend_event = function(req, res) {
             $gt: new Date(now_string.substring(0, now_string.indexOf('T'))).toISOString()
         }
     }, {
-        id: 1,
-        start: 1,
-        end: 1,
-        open_day: 1,
-        close_day: 1,
-        place: 1
+        _id: 0
     }).toArray(function(err, open_events) {
         if (err) {
             console.log(err);
@@ -299,7 +294,7 @@ exports.recommend_event = function(req, res) {
                     $gt: now_date.toISOString()
                 },
                 start: {
-                    $lt: new Date(now_date.getTime() + 3600 * 24 * 14).toISOString()
+                    $lt: new Date(now_date.getTime() + 3600 * 24 * 14 * 1000).toISOString()
                 }
             }, {
                 id: 1,
@@ -307,27 +302,31 @@ exports.recommend_event = function(req, res) {
                 end: 1,
                 place: 1
             }).toArray(function(_err, user_events) {
+                console.log(user_events, user_events.length);
                 if (_err) {
                     console.log(_err);
                     res.json(null);
                 } else {
                     var event_score = [];
                     var now_time = now_date.getTime();
+                    open_events = [open_events[0]];
+                    console.log(open_events);
                     
                     open_events.map(function(open_e) {
                         event_score[open_e.id] = 100;
                         var open_len_time = new Date(open_e.close_day).getTime() - new Date(open_e.open_day).getTime();
-                        var open_len = parseInt(open_len_time / 86400, 10) + 1;
+                        var open_len = parseInt(open_len_time / 86400000, 10) + 1;
                         var open_e_start = new Date(open_e.start).getTime();
-                        var open_e_end = new Date(open_e.end).getTime() - open_len_time;
+                        var open_e_end = new Date(open_e.end).getTime() - open_len_time + 86400000;
                         var open_e_total = open_e_end - open_e_start;
                         user_events.map(function(user_e, idx) {
                             var user_e_start = new Date(user_e.start).getTime();
                             var user_e_end = new Date(user_e.end).getTime();
                             var inner_score = 100;
+                            console.log(user_e_start, user_e_end, open_e_start, open_e_end, open_len, open_e_total);
                             for (var i = 0; i < open_len; i++) {
-                                var inner_open_e_start = open_e_start + (i * 86400);
-                                var inner_open_e_end = open_e_end + (i * 86400);
+                                var inner_open_e_start = open_e_start + (i * 86400000);
+                                var inner_open_e_end = open_e_end + (i * 86400000);
                                 var overlap;
                                 if (inner_open_e_end <= user_e_start || inner_open_e_start >= user_e_end) {
                                     // no overlap

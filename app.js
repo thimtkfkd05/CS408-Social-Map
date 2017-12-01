@@ -111,6 +111,7 @@ function connectDB(){
     if(err) throw err;
     console.log('connection successful');
     app.set('db', db);
+    //script_for_add_open_fb_event(db);
   });
 }
 
@@ -151,7 +152,7 @@ var script_simple = function(db) {
 };
 
 var script_for_add_open_fb_event = function(db) {
-    var open_events = require('./open_event1.json');
+    var open_events = require('./open_event3_1.json');
     console.log(typeof open_events, open_events.length);
     var async = require('async');
     async.mapLimit(open_events, 10, function(item, next) {
@@ -161,7 +162,7 @@ var script_for_add_open_fb_event = function(db) {
         item.end = new Date(item.end_time).toISOString();
         item.title = item.name;
         item.description = item.description || item.title;
-        if (new Date(item.end_time).getTime() - new Date(item.start_time).getTime() > 3600 * 24) {
+        if (new Date(item.end_time).getTime() - new Date(item.start_time).getTime() > 3600 * 24 * 1000) {
             item.open_day = new Date(item.start_time.substring(0, item.start_time.indexOf('T'))).toISOString();
             item.close_day = new Date(item.end_time.substring(0, item.end_time.indexOf('T'))).toISOString();
         }
