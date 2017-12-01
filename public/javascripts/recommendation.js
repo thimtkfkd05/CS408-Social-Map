@@ -115,5 +115,10 @@ $(document).on('change', '.event_category input[type="checkbox"]', function() {
 });
 
 $(document).on('click', '.add_event', function() {
-    
+    $.post('/add_open_event', {
+        id: $(this).data('id')
+    }, function(err) {
+        if (err) alert('Error ocurred. Please try again.');
+        else location.reload();
+    });
 });
