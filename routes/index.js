@@ -67,7 +67,13 @@ exports.event_get = function(req, res) {
     var db_event = req.app.get('db').collection('Heroes');
 
     db_event.find({
-        user_id: req.session.user_id
+        $or: [{
+            user_id: req.session.user_id,
+            open: false
+        }, {
+            user_id: req.session.user_id,
+            id: new RegExp('_' + req.session.user_id + '$')
+        }]
     }).toArray(function(err, results) {
         if (err) {
             res.json(false);
@@ -93,6 +99,36 @@ exports.event_save = function(req, res) {
         db_event.findOne({
             id: event_data.id
         }, function(find_err, find_result) {
+            var copy_open_event = function(prev_err, prev_result) {
+                if (prev_err) {
+                    res.json({
+                        err: prev_err,
+                        result: prev_result
+                    });
+                } else {
+                    var open_date = new Date(new Date(event_data.start).getTime() + 3600*9*1000).ISOString();
+                    var open_day = open_date.substring(0, open_date.indexOf('T'));
+                    db_event.insertOne({
+                        title: event_data.title,
+                        start: event_data.start,
+                        end: event_data.end,
+                        Allday: event_data.Allday,
+                        description: event_data.description,
+                        place: event_data.place,
+                        id: event_data.id + '_' + event_data.user_id,
+                        category: event_data.category || '기타',
+                        open_day: event_data.open_day || open_day,
+                        close_day: event_data.close_day || open_day,
+                        user_id: [event_data.user_id],
+                        open: true
+                    }, function(open_insert_err, open_insert_result) {
+                        res.json({
+                            err: open_insert_err,
+                            result: open_insert_result
+                        });
+                    });
+                }
+            };
             if (find_result) {
                 var update_option = {
                     $set: {
@@ -113,13 +149,19 @@ exports.event_save = function(req, res) {
                 db_event.update({
                     id: event_data.id
                 }, update_option, function(update_err, result) {
-                    res.json({
-                        err: update_err,
-                        result: result
-                    });
+                    if (event_data.open && event_data.id.indexOf('_' + event_data.user_id) < 0) {
+                        copy_open_event(update_err, result);
+                    } else {
+                        res.json({
+                            err: update_err,
+                            result: result
+                        });
+                    }
                 });
             } else if (!find_err) {
                 event_data.user_id = [event_data.user_id];
+                var is_open = event_data.open;
+                event_data.open = false;
                 db_event.insertOne(event_data, function (err, result) {
                     res.json({
                         err: err,
@@ -190,6 +232,151 @@ exports.get_open_event = function(req, res) {
         } else {
             // Add more..?
             res.json(results);
+        }
+    });
+};
+
+exports.add_open_event = function(req, res) {
+    var db_event = req.app.get('db').collection('Heroes');
+    var user_id = req.session.user_id;
+    db_event.findOne({
+        id: req.query.id,
+        open: true
+    }, {
+        _id: 0
+    }, function(find_err, find_result) {
+        if (find_err) {
+            res.json(find_err);
+        } else {
+            db_event.update({
+                id: req.query.id,
+                open: true
+            }, {
+                $push: {
+                    user_id: user_id
+                }
+            }, function(open_update_err, open_update_result) {
+                if (update_err) {
+                    res.json(update_err);
+                } else {
+                    find_result.open = false;
+                    db_event.insertOne(find_result, function(insert_err, insert_result) {
+                        res.json(insert_err);
+                    });
+                }
+            });
+        }
+    });
+};
+
+exports.recommend_event = function(req, res) {
+    var db_event = req.app.get('db').collection('Heroes');
+    var now_date = new Date();
+    var now_string = now_date.toISOString();
+    var final_date = new Date(now_date.getTime() + 3600 * 24 * 14);
+    var final_string = final_date.toISOString();
+    db_event.find({
+        open: true,
+        user_id: {
+            $ne: req.session.user_id
+        },
+        end: {
+            $gt: now_string
+        },
+        start: {
+            $lt: final_string
+        },
+        open_day: {
+            $lt: new Date(final_string.substring(0, final_string.indexOf('T'))).toISOString()
+        },
+        close_day: {
+            $gt: new Date(now_string.substring(0, now_string.indexOf('T'))).toISOString()
+        }
+    }, {
+        id: 1,
+        start: 1,
+        end: 1,
+        open_day: 1,
+        close_day: 1,
+        place: 1
+    }).toArray(function(err, open_events) {
+        if (err) {
+            console.log(err);
+            res.json(null);
+        } else {
+            db_event.find({
+                user_id: req.session.user_id,
+                end: {
+                    $gt: now_date.toISOString()
+                },
+                start: {
+                    $lt: new Date(now_date.getTime() + 3600 * 24 * 14).toISOString()
+                }
+            }, {
+                id: 1,
+                start: 1,
+                end: 1,
+                place: 1
+            }).toArray(function(_err, user_events) {
+                if (_err) {
+                    console.log(_err);
+                    res.json(null);
+                } else {
+                    var event_score = [];
+                    var now_time = now_date.getTime();
+                    
+                    open_events.map(function(open_e) {
+                        event_score[open_e.id] = 100;
+                        var open_len_time = new Date(open_e.close_day).getTime() - new Date(open_e.open_day).getTime();
+                        var open_len = parseInt(open_len_time / 86400, 10) + 1;
+                        var open_e_start = new Date(open_e.start).getTime();
+                        var open_e_end = new Date(open_e.end).getTime() - open_len_time;
+                        var open_e_total = open_e_end - open_e_start;
+                        user_events.map(function(user_e, idx) {
+                            var user_e_start = new Date(user_e.start).getTime();
+                            var user_e_end = new Date(user_e.end).getTime();
+                            var inner_score = 100;
+                            for (var i = 0; i < open_len; i++) {
+                                var inner_open_e_start = open_e_start + (i * 86400);
+                                var inner_open_e_end = open_e_end + (i * 86400);
+                                var overlap;
+                                if (inner_open_e_end <= user_e_start || inner_open_e_start >= user_e_end) {
+                                    // no overlap
+                                    overlap = 0;
+                                } else {
+                                    if (inner_open_e_start >= user_e_start && inner_open_e_end <= user_e_end) {
+                                        // all overlap
+                                        overlap = open_e_total;
+                                    } else {
+                                        //some overlap
+                                        if (inner_open_e_start <= user_e_start && inner_open_e_end >= user_e_end) {
+                                            overlap = user_e_end - user_e_start;
+                                        } else {
+                                            if (inner_open_e_start <= user_e_start) {
+                                                overlap = inner_open_e_end - user_e_start;
+                                            } else {
+                                                overlap = user_e_end - inner_open_e_start;
+                                            }
+                                        }
+                                    }
+                                }
+                                var score = parseInt(overlap / open_e_total / 1000 * 100000, 10);
+                                if (score < inner_score) {
+                                    inner_score = score;
+                                }
+                            }
+                            event_score[open_e.id] += inner_score;
+                        });
+                        console.log(open_e.id, event_score[open_e.id]);
+                    });
+
+                    var sorted_results = open_events.sort(function(a, b) {
+                        return event_score[a.id] - event_score[b.id];
+                    });
+                
+                    res.json(sorted_results);
+                }
+            });
         }
     });
 };

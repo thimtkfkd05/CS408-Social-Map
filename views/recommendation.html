@@ -23,10 +23,10 @@
     <div class="container row">
         <span class="col-xs-1"></span>
         <span id ="calendar_span" class="col-xs-10">
-            <div id='recommendation'>
-                <div class="event_search_wrapper">
-                    <div class="col-xs-2"></div>
-                    <div class="input-group col-xs-8">
+            <div id="recommendation">
+                <div class="row event_search_wrapper">
+                    <div class="col-xs-3"></div>
+                    <div class="input-group col-xs-6">
                         <span class="input-group-addon">Search Events</span>
                         <input id="msg" type="text" class="form-control" name="msg" placeholder="Input keywords">
                         <span class="input-group-btn">
@@ -38,13 +38,25 @@
                             </button>
                         </span>
                     </div>
-                    <div class="col-xs-2"></div>
+                    <div class="col-xs-3"></div>
                 </div>
-                <div class="event_category_wrapper">
-                    <div class="col-xs-2"></div>
-                    <div class="col-xs-8 input-group">
+                <div class="row event_category_wrapper">
+                    <div class="col-xs-3"></div>
+                    <div class="col-xs-6 input-group">
                         <span class="input-group-addon">Category</span>
                         <div class="event_category">
+                            <label for="concert">
+                                <input type="checkbox" id="consert" value="콘서트"> Concert
+                            </label>
+                            <label for="festival">
+                                <input type="checkbox" id="festival" value="축제"> Festival
+                            </label>
+                            <label for="meeting">
+                                <input type="checkbox" id="meeting" value="모임"> Meeting
+                            </label>
+                            <label for="session">
+                                <input type="checkbox" id="session" value="설명회"> Session
+                            </label>
                             <label for="musical">
                                 <input type="checkbox" id="musical" value="뮤지컬"> Musical
                             </label>
@@ -59,11 +71,11 @@
                             </label>
                         </div>
                     </div>
-                    <div class="col-xs-2"></div>
+                    <div class="col-xs-3"></div>
                 </div>
-                <div class="event_recommendation_wrapper">
+                <div class="row event_recommendation_wrapper">
                     <div class="col-xs-4"></div>
-                    <button class="btn btn-default btn-lg col-xs-4"> Recommendation For Me!</button>
+                    <button class="btn btn-default btn-lg col-xs-4"> Recommend For Me!</button>
                     <div class="col-xs-4"></div>
                 </div>
                 <div class="loader"></div>

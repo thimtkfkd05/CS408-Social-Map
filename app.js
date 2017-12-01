@@ -117,8 +117,39 @@ http.createServer(app).listen(app.get('port'), function(){
   connectDB()
 });
 
+function make_random_string(num) {
+    var text = "";
+    var possible = "abcdefghijklmnopqrstuvwxyz0123456789";
+
+    for (var i = 0; i < num; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+
+    return text;
+}
+
+var script_simple = function(db) {
+    var db_event = db.collection('Heroes');
+    db_event.find({
+        open: true
+    }).toArray(function(err, res) {
+        res.map(function(item, idx) {
+            db_event.update({
+                description: item.description
+            }, {
+                $set: {
+                    user_id: [],
+                    id: make_random_string(26)
+                }
+            }, function(update_err, result) {
+                console.log('update complete! ', update_err, idx);
+            });
+        });
+    });
+};
+
 var script_for_add_open_fb_event = function(db) {
-    var open_events = require('./open_event3.json');
+    var open_events = require('./open_event1.json');
     console.log(typeof open_events, open_events.length);
     var async = require('async');
     async.mapLimit(open_events, 10, function(item, next) {
@@ -127,9 +158,10 @@ var script_for_add_open_fb_event = function(db) {
         item.start = new Date(item.start_time).toISOString();
         item.end = new Date(item.end_time).toISOString();
         item.title = item.name;
+        item.description = item.description || item.title;
         if (new Date(item.end_time).getTime() - new Date(item.start_time).getTime() > 3600 * 24) {
-            item.open_day = new Date(new Date(new Date(item.start_time).setHours(0)).setMinutes(0)).toISOString();
-            item.close_day = new Date(new Date(new Date(item.end_time).setHours(0)).setMinutes(0)).toISOString();
+            item.open_day = new Date(item.start_time.substring(0, item.start_time.indexOf('T'))).toISOString();
+            item.close_day = new Date(item.end_time.substring(0, item.end_time.indexOf('T'))).toISOString();
         }
         delete item.name;
         delete item.start_time;
