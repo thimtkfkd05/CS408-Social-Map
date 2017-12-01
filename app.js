@@ -75,6 +75,8 @@ app.post('/event_save', check, routes.event_save);
 app.post('/event_remove', check, routes.event_remove);
 app.get('/event/edit/:id', check, routes.event_edit);
 app.get('/get_open_event', check, routes.get_open_event);
+app.post('/add_open_event', check, routes.add_open_event);
+app.post('/recommend_event', check, routes.recommend_event);
 app.get('/https_get', check, function(req, res) {
     var _result;
     var option = req.query.option ? req.query.option.split(',') : [];

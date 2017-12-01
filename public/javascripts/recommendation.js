@@ -114,6 +114,7 @@ $(document).on('change', '.event_category input[type="checkbox"]', function() {
     make_event_html(shorten_events(events));
 });
 
+
 $(document).on('click', '.add_event_modal', function() {
     $('#datemodal').on('shown.bs.modal', function () {
         $('#select_date').datetimepicker({
@@ -148,4 +149,13 @@ $(document).on('click', '.add_event_modal', function() {
             })
         }
     })
+});
+
+$(document).on('click', '.add_event', function() {
+    $.post('/add_open_event', {
+        id: $(this).data('id')
+    }, function(err) {
+        if (err) alert('Error ocurred. Please try again.');
+        else location.reload();
+    });
 });

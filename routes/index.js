@@ -99,36 +99,6 @@ exports.event_save = function(req, res) {
         db_event.findOne({
             id: event_data.id
         }, function(find_err, find_result) {
-            var copy_open_event = function(prev_err, prev_result) {
-                if (prev_err) {
-                    res.json({
-                        err: prev_err,
-                        result: prev_result
-                    });
-                } else {
-                    var open_date = new Date(new Date(event_data.start).getTime() + 3600*9*1000).ISOString();
-                    var open_day = open_date.substring(0, open_date.indexOf('T'));
-                    db_event.insertOne({
-                        title: event_data.title,
-                        start: event_data.start,
-                        end: event_data.end,
-                        Allday: event_data.Allday,
-                        description: event_data.description,
-                        place: event_data.place,
-                        id: event_data.id + '_' + event_data.user_id,
-                        category: event_data.category || '기타',
-                        open_day: event_data.open_day || open_day,
-                        close_day: event_data.close_day || open_day,
-                        user_id: [event_data.user_id],
-                        open: true
-                    }, function(open_insert_err, open_insert_result) {
-                        res.json({
-                            err: open_insert_err,
-                            result: open_insert_result
-                        });
-                    });
-                }
-            };
             if (find_result) {
                 var update_option = {
                     $set: {
@@ -137,7 +107,8 @@ exports.event_save = function(req, res) {
                         end: event_data.end,
                         Allday: event_data.Allday,
                         description: event_data.description,
-                        place: event_data.place
+                        place: event_data.place,
+                        open: event_data.open
                     }
                 };
 
@@ -146,22 +117,21 @@ exports.event_save = function(req, res) {
                         user_id: event_data.user_id
                     }
                 }
+                if (event_data.open) {
+                    update_option['$set'].id = event_data.id + '__' + event_data.user_id;
+                } else if (event_data.open !== find_result.open) {
+                    update_option['$set'].id = event_data.id.substring(0, event_data.id.indexOf('__' + event_data.user_id));
+                }
                 db_event.update({
                     id: event_data.id
                 }, update_option, function(update_err, result) {
-                    if (event_data.open && event_data.id.indexOf('_' + event_data.user_id) < 0) {
-                        copy_open_event(update_err, result);
-                    } else {
-                        res.json({
-                            err: update_err,
-                            result: result
-                        });
-                    }
+                    res.json({
+                        err: update_err,
+                        result: result
+                    });
                 });
             } else if (!find_err) {
                 event_data.user_id = [event_data.user_id];
-                var is_open = event_data.open;
-                event_data.open = false;
                 db_event.insertOne(event_data, function (err, result) {
                     res.json({
                         err: err,
@@ -195,25 +165,30 @@ exports.event_remove = function(req, res) {
 };
 
 exports.event_edit = function(req, res) {
-    var db_event = req.app.get('db').collection('Heroes');
-    db_event.findOne({
-        id: req.params.id
-    },function(err,result) {
-        if (!err) {
-            res.render('calendardata.edit.html', {
-                title: result.title || '',
-                start: result.start ? new Date(new Date(result.start).getTime() + 3600*9*1000).toISOString() : '',
-                end: result.end ? new Date(new Date(result.end).getTime() + 3600*9*1000).toISOString() : '',
-                Allday: result.Allday || false,
-                place: result.place || {lat: null, lng: null},
-                description: result.description || '',
-                open: result.open || false,
-            });
-        }
-        else {
-            console.log("error in one_get function: ", err);
-        }
-    });
+    if (req.params.id.indexOf('_') > -1 && req.params.id.indexOf('__') < 0) {
+        console.log('Permission Denied');
+        res.redirect('/calendar');
+    } else {
+        var db_event = req.app.get('db').collection('Heroes');
+        db_event.findOne({
+            id: req.params.id
+        },function(err,result) {
+            if (!err) {
+                res.render('calendardata.edit.html', {
+                    title: result.title || '',
+                    start: result.start ? new Date(new Date(result.start).getTime() + 3600*9*1000).toISOString() : '',
+                    end: result.end ? new Date(new Date(result.end).getTime() + 3600*9*1000).toISOString() : '',
+                    Allday: result.Allday || false,
+                    place: result.place || {lat: null, lng: null},
+                    description: result.description || '',
+                    open: result.open || false,
+                });
+            }
+            else {
+                console.log("error in one_get function: ", err);
+            }
+        });
+    }
 };
 
 exports.get_open_event = function(req, res) {
@@ -239,8 +214,12 @@ exports.get_open_event = function(req, res) {
 exports.add_open_event = function(req, res) {
     var db_event = req.app.get('db').collection('Heroes');
     var user_id = req.session.user_id;
+    var need_day_select = !!req.body.selected_day;
+    var selected_date = need_day_select ? new Date(req.body.selected_day).toISOString() : '';
+    var selected_day = need_day_select ? selected_date.substring(0, selected_date.indexOf('T')) : '';
+
     db_event.findOne({
-        id: req.query.id,
+        id: req.body.id,
         open: true
     }, {
         _id: 0
@@ -249,7 +228,7 @@ exports.add_open_event = function(req, res) {
             res.json(find_err);
         } else {
             db_event.update({
-                id: req.query.id,
+                id: req.body.id,
                 open: true
             }, {
                 $push: {
@@ -259,7 +238,17 @@ exports.add_open_event = function(req, res) {
                 if (update_err) {
                     res.json(update_err);
                 } else {
+                    var start_date = find_result.start;
+                    var end_date = find_result.end;
+                    var start_time = need_day_select ? start_date.substring(start_date.indexOf('T'), start_date.length) : start_date;
+                    var end_time = need_day_select ? end_date.substring(end_date.indexOf('T'), end_date.length) : end_date;
+                    find_result.id += '_' + user_id;
+                    find_result.start = selected_day + start_time;
+                    find_result.end = selected_day + end_time;
+                    delete find_result.open_day;
+                    delete find_result.close_day;
                     find_result.open = false;
+                    find_result.user_id = [user_id];
                     db_event.insertOne(find_result, function(insert_err, insert_result) {
                         res.json(insert_err);
                     });
@@ -273,7 +262,7 @@ exports.recommend_event = function(req, res) {
     var db_event = req.app.get('db').collection('Heroes');
     var now_date = new Date();
     var now_string = now_date.toISOString();
-    var final_date = new Date(now_date.getTime() + 3600 * 24 * 14);
+    var final_date = new Date(now_date.getTime() + 3600 * 1000 * 24 * 14);
     var final_string = final_date.toISOString();
     db_event.find({
         open: true,
