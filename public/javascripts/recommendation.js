@@ -87,7 +87,7 @@ $(window).on('load', function() {
 $(document).on('click', '.search_event', function() {
     var query = $('#msg').val().trim();
     var events = all_events.map(function(item) {
-        if (query && item.category.indexOf(query) > -1 || item.title.indexOf(query) > -1 || item.description.indexOf(query) > -1) {
+        if (query && (item.category && item.category.indexOf(query) > -1) || (item.title && item.title.indexOf(query) > -1) || (item.description && item.description.indexOf(query) > -1)) {
             return item;
         } else {
             return 'rm';

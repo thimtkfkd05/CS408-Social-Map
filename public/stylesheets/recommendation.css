@@ -164,7 +164,7 @@ section > .container {
     border-radius: 5px;
 }
 
-.map-view {
+.map-view, .view_all {
     cursor: pointer;
 }
 
