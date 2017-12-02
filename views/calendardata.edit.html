@@ -105,6 +105,9 @@
 
         var title = '<%= title %>';
         var Allday = '<%- Allday %>';
+        Allday = String(Allday) == 'true';
+        var open = '<%- open %>';
+        open = String(open) == 'true';
         var description = '<%= description %>';
         var place = '<%- JSON.stringify(place) %>';
         var end = '<%= end %>';
@@ -113,9 +116,9 @@
         $('#title').val(title);
         $('#description').val(description);
         $('#inlineCheckbox1').attr('checked', Allday);
+        $('#open').attr('checked', open);
         start && $('#datetimepicker1').data('DateTimePicker').date(start);
         end && $('#datetimepicker2').data('DateTimePicker').date(end);
-        console.log(place,JSON.parse(place),typeof(place));
         place = place ? JSON.parse(place) : null;
         if (place && place.lat && place.lng) {
             placeMarker(place);

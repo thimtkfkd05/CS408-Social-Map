@@ -181,7 +181,7 @@ exports.event_edit = function(req, res) {
                     title: result.title || '',
                     start: result.start ? new Date(new Date(result.start).getTime() + 3600*9*1000).toISOString() : '',
                     end: result.end ? new Date(new Date(result.end).getTime() + 3600*9*1000).toISOString() : '',
-                    Allday: result.Allday || false,
+                    Allday: String(result.Allday) == 'true',
                     place: result.place || {lat: null, lng: null},
                     description: result.description || '',
                     open: String(result.open) == 'true',
