@@ -73,7 +73,7 @@ exports.event_get = function(req, res) {
             open: false
         }, {
             user_id: req.session.user_id,
-            id: new RegExp('_by_user_' + req.session.user_id + '$')
+            id: new RegExp('_' + req.session.user_id + '$')
         }]
     }).toArray(function(err, results) {
         if (err) {
