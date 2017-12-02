@@ -253,7 +253,6 @@ $(document).on('click', '.export_btn', function() {
 
     gapi.client.load('calendar', 'v3', function() {
         gapi.client.calendar.calendarList.list({}).execute(function(cal_list) {
-        //$.get('https://www.googleapis.com/calendar/v3/users/me/calendarList', {}, function(cal_list) {
             if (cal_list && !cal_list.error) {
                 cal_list.items.some(function(cal) {
                     if (cal.accessRole == 'owner') {
@@ -266,14 +265,16 @@ $(document).on('click', '.export_btn', function() {
                 
                 var place = '';
                 var export_work = function() {
+                    var start_time = new Date(ex_event.start).getTime() - 3600*9*1000;
+                    var end_time = new Date(ex_event.end).getTime() - 3600*9*1000;
                     var options = {
                         calendarId: calendarId,
                         iCalUID: ex_event.id + '@google.com',
                         start: {
-                            dateTime: new Date(ex_event.start).toJSON()
+                            dateTime: new Date(start_time).toJSON()
                         },
                         end: {
-                            dateTime: new Date(ex_event.end).toJSON()
+                            dateTime: new Date(end_time).toJSON()
                         },
                         summary: ex_event.title,
                         description: ex_event.description || ''
@@ -283,7 +284,6 @@ $(document).on('click', '.export_btn', function() {
                     }
 
                     gapi.client.calendar.events.import(options).execute(function(result) {
-                    //$.post('https://www.googleapis.com/calendar/v3/calendars/' + calendarId + '/events/import', options, function(result) {
                         if (result && !result.error) {
                             console.log('Export Success!');
                         } else {

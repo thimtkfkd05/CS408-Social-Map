@@ -12,7 +12,10 @@ const heroSchema = new Schema(
         start: String,
         title: String,
         user_id: Array,
-        open: Boolean
+        open: Boolean,
+        url: String,
+        open_day: String,
+        close_day: String
     },
     {
         collection: 'Heroes'

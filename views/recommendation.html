@@ -2,13 +2,19 @@
 <html lang="en">
 <script src= "/libs/jquery/jquery.js"></script>
 <script src= "/libs/bootstrap/js/bootstrap.js"></script>
+<script src= "/libs/moment/moment-with-locales.min.js"></script>
+<script src= "/libs/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script src= "/libs/async.js"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXfi1nvZAd4r77rx_FCeHasUDIR8GrnEk"></script>
+<script src= "/javascripts/recommendation.js"></script>
 <link rel = "stylesheet" href="/libs/font-awesome/css/font-awesome.css">
 <link rel = "stylesheet" href = "/libs/bootstrap/css/bootstrap.css">
+<link rel = "stylesheet" href = "/libs/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css">
 <link rel = "stylesheet" href = "/stylesheets/header.css">
 <link rel = "stylesheet" href = "/stylesheets/recommendation.css">
 <head>
     <meta charset="UTF-8">
-    <title>calendar</title>
+    <title>Join - Events</title>
 </head>
 <body>
 <header>
@@ -18,54 +24,142 @@
     <div class="container row">
         <span class="col-xs-1"></span>
         <span id ="calendar_span" class="col-xs-10">
-            <div id='recommendation'>
-                <div style="height:100px">
-                    <div class="col-xs-2"></div>
-                  <div class="input-group col-xs-8">
-                    <span class="input-group-addon">Search Events</span>
-                    <input id="msg" type="text" class="form-control" name="msg" placeholder="Input keywords">
-                  </div>
-                    <div class="col-xs-2"></div>
+            <div id="recommendation">
+                <div class="row event_search_wrapper">
+                    <div class="col-xs-3"></div>
+                    <div class="input-group col-xs-6">
+                        <span class="input-group-addon">Search Events</span>
+                        <input id="msg" type="text" class="form-control" name="msg" placeholder="Input keywords">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default search_event">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            <button class="btn btn-default initialize_event">
+                                <i class="fa fa-undo"></i>
+                            </button>
+                        </span>
+                    </div>
+                    <div class="col-xs-3"></div>
                 </div>
-                <div style = "height:300px; margin: 20px;">
-                    <div style="border-radius: 10px; background-color: #aaaaaa; height: 100%; width: 100%;">
-                        <div class="col-xs-3"style="height:100%;"><img src="tmp1.jpg" style="height: inherit; width:auto;"> </div>
-                        <div class="col-xs-9" style="height:100%;color: white">
-                            <h2>COFFEE MORNING</h2>
-                            <p>This event grants you a cup of morning coffee for free.</p>
-                            <p>From 2018-06-23T07:00:00 To 2018-06-23T11:00:00</p>
-                            <p>This event is free to join and free to exit.</p>
-                            <p>Event fee : none</p>
+                <div class="row event_category_wrapper">
+                    <div class="col-xs-3"></div>
+                    <div class="col-xs-6 input-group">
+                        <span class="input-group-addon">Category</span>
+                        <div class="event_category">
+                            <label for="concert">
+                                <input type="checkbox" id="concert" value="콘서트"> Concert
+                            </label>
+                            <label for="festival">
+                                <input type="checkbox" id="festival" value="축제"> Festival
+                            </label>
+                            <label for="meeting">
+                                <input type="checkbox" id="meeting" value="모임"> Meeting
+                            </label>
+                            <label for="session">
+                                <input type="checkbox" id="session" value="설명회"> Session
+                            </label>
+                            <label for="musical">
+                                <input type="checkbox" id="musical" value="뮤지컬"> Musical
+                            </label>
+                            <label for="exhibition">
+                                <input type="checkbox" id="exhibition" value="전시"> Exhibition
+                            </label>
+                            <label for="theater">
+                                <input type="checkbox" id="theater" value="연극"> Theater
+                            </label>
+                            <label for="etc">
+                                <input type="checkbox" id="etc" value="기타"> Etc.
+                            </label>
                         </div>
                     </div>
+                    <div class="col-xs-3"></div>
                 </div>
-                <div style = "height:300px; margin: 20px;">
-                    <div style="border-radius: 10px; background-color: #aaaaaa; height: 100%; width: 100%;">
-                        <div class="col-xs-3"style="height:100%;"><img src="tmp1.jpg" style="height: inherit; width:auto;"> </div>
-                        <div class="col-xs-9" style="height:100%;color: white">
-                            <h2>COFFEE MORNING</h2>
-                            <p>This event grants you a cup of morning coffee for free.</p>
-                            <p>From 2018-06-23T07:00:00 To 2018-06-23T11:00:00</p>
-                            <p>This event is free to join and free to exit.</p>
-                            <p>Event fee : none</p>
-                        </div>
-                    </div>
+                <div class="row event_recommendation_wrapper">
+                    <div class="col-xs-4"></div>
+                    <button id="recommend_btn" class="btn btn-default btn-lg col-xs-4"> Recommend For Me!</button>
+                    <div class="col-xs-4"></div>
                 </div>
-                <div style = "height:300px; margin: 20px;">
-                    <div style="border-radius: 10px; background-color: #aaaaaa; height: 100%; width: 100%;">
-                        <div class="col-xs-3"style="height:100%;"><img src="tmp1.jpg" style="height: inherit; width:auto;"> </div>
-                        <div class="col-xs-9" style="height:100%;color: white">
-                            <h2>COFFEE MORNING</h2>
-                            <p>This event grants you a cup of morning coffee for free.</p>
-                            <p>From 2018-06-23T07:00:00 To 2018-06-23T11:00:00</p>
-                            <p>This event is free to join and free to exit.</p>
-                            <p>Event fee : none</p>
-                        </div>
-                    </div>
-                </div>
-
+                <div class="loader page_loader"></div>
             </div>
+
+
         </span>
         <span class="col-xs-1"></span>
     </div>
 </section>
+<!-- Modal -->
+<div class="modal fade" id="mapModal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><i class="fa fa-times"></i></button>
+                <h4 class="modal-title">Map</h4>
+            </div>
+            <div class="modal-body">
+                <div class="map_loader loader"></div>
+                <div id="map"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="datemodal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><i class="fa fa-times"></i></button>
+                <h4 class="modal-title">Join this Event</h4>
+            </div>
+            <div class="modal-body">
+                <div id="select_description" class="alert alert-info">
+                    Select date you want to join.<br>You can select between
+                </div>
+                <div class="date_container">
+                    <div class="row">
+                        <div class="col-xs-1"></div>
+                        <div class="col-xs-10">
+                            <div class="form-group row">
+                                <span class="date_title col-xs-4">Select Date</span>
+                                <div class="input-group date col-xs-8" id="select_date">
+                                    <input type="text" class="form-control" />
+                                    <span class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-1"></div>
+                    </div>
+                    <div class="alert alert-danger warning_msg" style="margin: 15px 0 -5px; display: none;">Select Possible Date!</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="form-group">
+                    <button class="btn btn-success join_btn">Join</button>
+                    <button class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="descModal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><i class="fa fa-times"></i></button>
+                <h4 class="modal-title">Description</h4>
+            </div>
+            <div class="modal-body">
+                <div id="description_detail"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>
