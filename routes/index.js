@@ -1,6 +1,7 @@
 var google = require('googleapis');
 // for DEBUG
 var server_url = 'http://localhost:3000/';
+var async = require('async');
 
 exports.index = function(req, res){
   //res.render('index', { title: 'Express' });
