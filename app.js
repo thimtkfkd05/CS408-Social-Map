@@ -111,7 +111,6 @@ function connectDB(){
     if(err) throw err;
     console.log('connection successful');
     app.set('db', db);
-    //script_for_add_open_fb_event(db);
   });
 }
 
@@ -131,22 +130,48 @@ function make_random_string(num) {
     return text;
 }
 
+var script_simple2 = function(db) {
+    var db_event = db.collection('Heroes');
+    db_event.update({
+        open: true,
+        user_id: '108715332955789248165',
+        id: {
+            $not: /_108715332955789248165$/
+        }
+    }, {
+        $pull: {
+            user_id: '108715332955789248165'
+        }
+    }, {
+        multi: true
+    }, function(err, res) {
+        console.log(err, res);
+        db_event.remove({
+            open: false,
+            id: /_by_user_108715332955789248165$/
+        }, function(_err, _res) {
+            console.log('remove end ', _err);
+        })
+    });
+};
+
 var script_simple = function(db) {
     var db_event = db.collection('Heroes');
     db_event.find({
         open: true,
-        open_day: {$exists: false},
-        close_day: {$exists: false}
+        id: {
+            $not: /__108715332955789248165$/
+        },
+        open_day: /00:00:00Z$/,
+        close_day: /00:00:00Z$/
     }).toArray(function(err, res) {
         res.map(function(item, idx) {
-            item.start = new Date(new Date(item.start).getTime() + 3600*9*1000).toISOString();
-            item.end = new Date(new Date(item.end).getTime() + 3600*9*1000).toISOString();
             db_event.update({
                 id: item.id
             }, {
                 $set: {
-                    open_day: item.start.substring(0, item.start.indexOf('T')),
-                    close_day: item.end.substring(0, item.end.indexOf('T'))
+                    open_day: item.open_day.substring(0, item.open_day.indexOf('T')),
+                    close_day: item.close_day.substring(0, item.close_day.indexOf('T'))
                 }
             }, function(update_err, result) {
                 console.log('update complete! ', update_err, idx);
