@@ -12,7 +12,7 @@ var card_template = function(e) {
                 'Schedule : ', e.open_day + ' ~ ' + e.close_day + ' / ' + e.start.substring(e.start.indexOf('T')+1, e.start.indexOf(':00.000Z')) + ' ~ ' + e.end.substring(e.end.indexOf('T')+1, e.end.indexOf(':00.000Z')),,
                 (e.place && e.place.lat !== null ? '<br><br>Place : ' + '<a class="map-view" data-toggle="modal" data-target="#mapModal" data-lat="' + e.place.lat + '" data-lng="' + e.place.lng + '">' + '<i class="fa fa-map-marker"' + '></i> View Map' + '</a>' : ''),
             '</div>',
-            '<button class="btn btn-default btn-lg' + (e.open_day !== e.close_day ? ' add_event_modal' : ' add_event') + '" data-id="' + e.id + (e.open_day !== e.close_day ? '" data-toggle = "modal" data-target ="#datemodal"' : '"') + '>Join this Event</button>',
+            '<button class="btn btn-default' + (e.open_day !== e.close_day ? ' add_event_modal' : ' add_event') + '" data-id="' + e.id + (e.open_day !== e.close_day ? '" data-toggle = "modal" data-target ="#datemodal"' : '"') + '>Join this Event</button>',
         '</div>'
     ].join('');
 };
@@ -37,6 +37,13 @@ var make_event_html = function(events) {
     $('.page_loader').hide();
     $('#recommendation').append(card_html);
     $('.page_0').show();
+    $('.event_desc .desc_detail').map(function(idx, obj) {
+        console.log(idx, obj, $(obj).height(), $(obj).parent().height());
+        if ($(obj).height() > 100) {
+            $(obj).after('<a class="view_all" data-target="#descModal" data-toggle="modal" data-id="' + $(obj).parents('.event_card').find('button').data('id') + '"> view all description</a>');
+            $(obj).addClass('long_desc');
+        }
+    });
 };
 
 var shorten_events = function(events) {
@@ -66,6 +73,13 @@ $(window).on('load', function() {
     $(window).scroll(function() {
         if ($(window).scrollTop() == $(document).height() - $(window).height()) {
             $('.page_' + page).length && $('.page_' + page).show();
+            $('.event_desc .desc_detail').map(function(idx, obj) {
+                console.log(idx, obj, $(obj).height(), $(obj).parent().height());
+                if ($(obj).height() > 100) {
+                    $(obj).after('<a class="view_all" data-target="#descModal" data-toggle="modal" data-id="' + $(obj).parents('.event_card').find('button').data('id') + '"> view all description</a>');
+                    $(obj).addClass('long_desc');
+                }
+            });
             page++;
         }
     });
@@ -197,3 +211,11 @@ $(document).on('click','.map-view', function () {
     });
 });
 
+$(document).on('click', '.view_all', function() {
+    var detail = $(this).parent().find('.desc_detail').html();
+    $('#descModal').on('shown.bs.modal', function() {
+        $('#descModal #description_detail').html(detail);
+    }).on('hidden.bs.modal', function() {
+        $('#descModal #description_detail').empty();
+    });
+});
