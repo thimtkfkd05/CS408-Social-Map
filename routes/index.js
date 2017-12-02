@@ -150,10 +150,26 @@ exports.event_save = function(req, res) {
         });
     } else if (req.body.events && req.body.events.length) { // for import events from google calendar
         var events = req.body.events;
-        db_event.insertMany(events, function(err, result) {
-            res.json({
-                err: err,
-                result: result
+        async.mapLimit(events, 10, function(item, next) {
+            db_event.findOne({
+                id: item.id
+            }, function(find_err, find_result) {
+                if (!find_err && find_result) {
+                    db_event.remove({
+                        id: item.id
+                    }, function(remove_err, remove_result) {
+                        next(remove_err, item);
+                    });
+                } else {
+                    next(find_err, item);
+                }
+            });
+        }, function(async_err, results) {
+            db_event.insertMany(results, function(err, result) {
+                res.json({
+                    err: async_err || err,
+                    result: result
+                });
             });
         });
     }

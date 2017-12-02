@@ -111,7 +111,7 @@ td .fc-today.selected{
     top: 14px;
 }
 
-.floating_menu > button a {
+.floating_menu > .dropdown-menu a {
     cursor: pointer;
 }
 
