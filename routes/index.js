@@ -75,7 +75,7 @@ exports.event_get = function(req, res) {
             open: 'false'
         }, {
             user_id: req.session.user_id,
-            id: new RegExp('_' + req.session.user_id + '$')
+            id: new RegExp('_by_user_' + req.session.user_id + '$')
         }]
     }).toArray(function(err, results) {
         if (err) {
@@ -184,7 +184,7 @@ exports.event_remove = function(req, res) {
 };
 
 exports.event_edit = function(req, res) {
-    if (req.params.id.indexOf('_') > -1 && req.params.id.indexOf('__') < 0) {
+    if (req.params.id.indexOf('_by_user_') > -1 && req.params.id.indexOf('__') < 0) {
         console.log('Permission Denied');
         res.redirect('/calendar');
     } else {
@@ -261,14 +261,14 @@ exports.add_open_event = function(req, res) {
                     user_id: user_id
                 }
             }, function(open_update_err, open_update_result) {
-                if (update_err) {
-                    res.json(update_err);
+                if (open_update_err) {
+                    res.json(open_update_err);
                 } else {
                     var start_date = find_result.start;
                     var end_date = find_result.end;
                     var start_time = need_day_select ? start_date.substring(start_date.indexOf('T'), start_date.length) : start_date;
                     var end_time = need_day_select ? end_date.substring(end_date.indexOf('T'), end_date.length) : end_date;
-                    find_result.id += '_' + user_id;
+                    find_result.id += '_by_user_' + user_id;
                     find_result.start = selected_day + start_time;
                     find_result.end = selected_day + end_time;
                     delete find_result.open_day;
