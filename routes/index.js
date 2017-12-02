@@ -73,9 +73,6 @@ exports.event_get = function(req, res) {
             open: false
         }, {
             user_id: req.session.user_id,
-            open: 'false'
-        }, {
-            user_id: req.session.user_id,
             id: new RegExp('_by_user_' + req.session.user_id + '$')
         }]
     }).toArray(function(err, results) {
@@ -109,10 +106,10 @@ exports.event_save = function(req, res) {
                         title: event_data.title,
                         start: event_data.start,
                         end: event_data.end,
-                        Allday: event_data.Allday,
+                        Allday: String(event_data.Allday) == 'true',
                         description: event_data.description,
                         place: event_data.place,
-                        open: event_data.open
+                        open: String(event_data.open) == 'true'
                     }
                 };
 
@@ -135,6 +132,8 @@ exports.event_save = function(req, res) {
                     });
                 });
             } else if (!find_err) {
+                event_data.Allday = String(event_data.Allday) == 'true';
+                event_data.open = String(event_data.open) == 'true';
                 event_data.user_id = [event_data.user_id];
                 db_event.insertOne(event_data, function (err, result) {
                     res.json({
@@ -152,6 +151,8 @@ exports.event_save = function(req, res) {
     } else if (req.body.events && req.body.events.length) { // for import events from google calendar
         var events = req.body.events;
         async.mapLimit(events, 10, function(item, next) {
+            item.Allday = String(item.Allday) == 'true';
+            item.open = String(item.open) == 'true';
             db_event.findOne({
                 id: item.id
             }, function(find_err, find_result) {
@@ -214,17 +215,10 @@ exports.event_edit = function(req, res) {
 exports.get_open_event = function(req, res) {
     var db_event = req.app.get('db').collection('Heroes');
     db_event.find({
-        $or: [{
-            open: true,
-            user_id: {
-                $ne: req.session.user_id
-            }
-        }, {
-            open: 'true',
-            user_id: {
-                $ne: req.session.user_id
-            }
-        }]
+        open: true,
+        user_id: {
+            $ne: req.session.user_id
+        }
     }, {
         _id: 0
     }).toArray(function(err, results) {
@@ -254,8 +248,7 @@ exports.add_open_event = function(req, res) {
             res.json(find_err);
         } else {
             db_event.update({
-                id: req.body.id,
-                open: true
+                id: req.body.id
             }, {
                 $push: {
                     user_id: user_id
@@ -330,15 +323,12 @@ exports.recommend_event = function(req, res) {
                 end: 1,
                 place: 1
             }).toArray(function(_err, user_events) {
-                console.log(user_events, user_events.length);
                 if (_err) {
                     console.log(_err);
                     res.json(null);
                 } else {
                     var event_score = [];
                     var now_time = now_date.getTime();
-                    //open_events = [open_events[0]]; // for DEBUG
-                    console.log(open_events.length);
                     
                     open_events.map(function(open_e) {
                         event_score[open_e.id] = 0;
@@ -363,7 +353,6 @@ exports.recommend_event = function(req, res) {
                         user_events.map(function(user_e, idx) {
                             var user_e_start = new Date(user_e.start).getTime();
                             var user_e_end = new Date(user_e.end).getTime();
-                            //console.log(user_e_start, user_e_end, open_e_start, open_e_end, open_len, open_e_total);
                             for (var i = 0; i < open_len; i++) {
                                 var inner_open_e_start = open_e_start + (i * 86400000);
                                 var inner_open_e_end = open_e_end + (i * 86400000);
@@ -389,14 +378,11 @@ exports.recommend_event = function(req, res) {
                                     }
                                 }
                                 var score = parseInt(overlap / open_e_total / 1000 * 100000, 10);
-                                //console.log(overlap, open_e_total, score);
                                 if (event_score[open_e.id] > score) {
                                     event_score[open_e.id] = score;
                                 }
-                                //console.log("after: ", score, event_score[open_e.id]);
                             }
                         });
-                        console.log(open_e.id, event_score[open_e.id]);
                     });
 
                     var sorted_results = open_events.sort(function(a, b) {
