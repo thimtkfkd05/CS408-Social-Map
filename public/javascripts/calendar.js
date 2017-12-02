@@ -314,3 +314,15 @@ $(document).on('click', '.export_btn', function() {
         });
     });
 });
+
+$(document).on('click', '.remove_btn', function() {
+    var event_id = $(this).data('id');
+    $.post('/event_remove', {
+        id: event_id
+    }, function(err) {
+        if (err) alert('Remove failed. Please refresh and try again.');
+        else {
+            location.reload();
+        }
+    });
+})
