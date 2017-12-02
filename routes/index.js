@@ -121,6 +121,10 @@ exports.event_save = function(req, res) {
                 }
                 if (event_data.open && event_data.id.indexOf('__' + event_data.user_id) < 0) {
                     update_option['$set'].id = event_data.id + '__' + event_data.user_id;
+                    var start_date = new Date(new Date(event_data.start).getTime() + 3600*9*1000).toISOString();
+                    var end_date = new Date(new Date(event_data.start).getTime() + 3600*9*1000).toISOString();
+                    update_option['$set'].open_day = start_date.substring(0, start_date.indexOf('T'));
+                    update_option['$set'].close_day = end_date.substring(0, end_date.indexOf('T'));
                 } else if (event_data.open !== find_result.open) {
                     update_option['$set'].id = event_data.id.substring(0, event_data.id.indexOf('__' + event_data.user_id));
                 }
