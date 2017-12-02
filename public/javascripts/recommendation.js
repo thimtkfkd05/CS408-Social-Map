@@ -1,5 +1,6 @@
 var user_id;
 var all_events;
+var user_events;
 var card_template = function(e) {
     e.start = new Date(new Date(e.start).getTime() + 3600*1000*9).toISOString();
     e.end = new Date(new Date(e.end).getTime() + 3600*1000*9).toISOString();
@@ -53,6 +54,13 @@ var shorten_events = function(events) {
     return events;
 };
 
+$.get('/event_get', {}, function(results) {
+    if (results) {
+        user_events = results;
+        console.log(user_events);
+    }
+});
+
 $(window).on('load', function() {
     var check = false;
     var getId = setInterval(function() {
@@ -68,7 +76,7 @@ $(window).on('load', function() {
             });
         }
     }, 100);
-
+    
     var page = 1;
     $(window).scroll(function() {
         if ($(window).scrollTop() == $(document).height() - $(window).height()) {
@@ -132,14 +140,7 @@ $(document).on('change', '.event_category input[type="checkbox"]', function() {
     make_event_html(shorten_events(events));
 });
 
-
 $(document).on('click', '.add_event_modal', function() {
-    $('#datemodal').on('shown.bs.modal', function () {
-        $('#select_date').datetimepicker({
-            format: 'YYYY/MM/DD',
-            useCurrent: true
-        });
-    });
     var event_id = $(this).data('id');
     var event_data;
     all_events.some(function(item) {
@@ -148,7 +149,24 @@ $(document).on('click', '.add_event_modal', function() {
             return true;
         } else return false;
     });
-    $('#select_description').html($('#select_description').html() + ' ' + event_data.open_day + ' and ' + event_data.close_day);
+
+    $('#datemodal').on('shown.bs.modal', function () {
+        $('#select_date').datetimepicker({
+            format: 'YYYY/MM/DD',
+            useCurrent: true,
+            minDate: event_data.open_day,
+            maxDate: event_data.close_day,
+        });
+    });
+
+    // not working yet
+    $(document).on('change', '#select_date', function() {
+        var selected_date = new Date($(this).data().date).getTime();
+        var selected_start = new Date(event_data.start).getTime() - new Date(event_data.open_day).getTime();
+        console.log(new Date(selected_date), new Date(selected_start), new Date(selected_start + selected_date));
+        user_events.map(function(item) {
+        });
+    });
 
     $(document).on('click', '.join_btn', function () {
         var selected_day = $('#select_date').data().date;

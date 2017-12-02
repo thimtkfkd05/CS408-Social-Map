@@ -110,11 +110,11 @@ section > .container {
 }
 
 #datemodal .modal-dialog{
-    width : 30%;
+    width : 33%;
     height : 30%;
-    margin-top : 15%;
-    margin-left: 35%;
-    margin-right: 35%;
+    margin-top : 10%;
+    margin-left: 33.5%;
+    margin-right: 33.5%;
     position: fixed;
     display: block;
 }
