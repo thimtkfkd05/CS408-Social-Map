@@ -9,7 +9,7 @@ var card_template = function(e) {
             '<h3>' + e.title + '</h2>',
             '<div class="event_desc">',
                 '<div class="desc_detail">' + e.description + (e.url ? '<br><br>Homepage : ' + '<a href="' + e.url + '" target="_blank">click here</a>' : '')  + '</div>',
-                '<br>',
+                     '<br>',
                 'Schedule : ', e.open_day + ' ~ ' + e.close_day + ' / ' + e.start.substring(e.start.indexOf('T')+1, e.start.indexOf(':00.000Z')) + ' ~ ' + e.end.substring(e.end.indexOf('T')+1, e.end.indexOf(':00.000Z')),,
                 (e.place && e.place.lat !== null ? '<br><br>Place : ' + '<a class="map-view" data-toggle="modal" data-target="#mapModal" data-lat="' + e.place.lat + '" data-lng="' + e.place.lng + '">' + '<i class="fa fa-map-marker"' + '></i> View Map' + '</a>' : ''),
             '</div>',
