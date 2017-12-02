@@ -173,12 +173,19 @@ $(document).on('click', '.add_event_modal', function() {
     var get_day = function(time_string) {
         return time_string.substring(0, time_string.indexOf('T')).replace(/\-/g, '/');
     };
+    var check_overlap = function(s1, e1, s2, e2) {
+        if (s1 < s2 && s2 < e1) return true;
+        else if (s1 < e2 && e2 < e1) return true;
+        else if (s2 < s1 && s1 < e2) return true;
+        else if (s2 < e1 && e1 < e2) return true;
+        else return false;
+    };
     user_events.map(function(e) {
         var e_start_time = get_user_time(e.start);
         var e_end_time = get_user_time(e.end);
         var start_time = get_event_time(get_event_date(e_start_time, event_data.start));
         var end_time = get_event_time(get_event_date(e_end_time, event_data.end));
-        if (start_time < e_start_time < end_time || start_time < e_end_time < end_time || e_start_time < start_time < e_end_time || e_start_time < end_time < e_end_time) {
+        if (check_overlap(start_time, end_time, e_start_time, e_end_time)) {
             overlap_day_list.push(get_day(e.end));
         }
     });
