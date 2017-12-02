@@ -158,19 +158,21 @@ $(document).on('click', '.add_event_modal', function() {
     });
 
     var overlap_day_list = [];
-    var get_time = function(time_string) {
-        return new Date('1970-01-01' + time_string.substring(time_string.indexOf('T'), time_string.length)).getTime();
+    var get_user_time = function(time_string) {
+        return new Date(time_string).getTime();
+    };
+    var get_event_time = function(time_string) {
+        return new Date(event_data.start).getTime() + 3600*9*1000;
     };
     var get_day = function(time_string) {
         return time_string.substring(0, time_string.indexOf('T')).replace(/\-/g, '/');
     };
-    var start_time = get_time(event_data.start) + 3600*9*1000;
-    var end_time = get_time(event_data.end) + 3600*9*1000;
+    var start_time = get_event_time(event_data.start);
+    var end_time = get_event_time(event_data.end);
     user_events.map(function(e) {
-        var e_start_time = get_time(e.start);
-        var e_end_time = get_time(e.end);
+        var e_start_time = get_user_time(e.start);
+        var e_end_time = get_user_time(e.end);
         if (start_time < e_start_time < end_time || start_time < e_end_time < end_time || e_start_time < start_time < e_end_time || e_start_time < end_time < e_end_time) {
-            var date = new Date(e.end);
             overlap_day_list.push(get_day(e.end));
         }
     });
