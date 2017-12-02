@@ -164,8 +164,8 @@ $(document).on('click', '.add_event_modal', function() {
     var get_day = function(time_string) {
         return time_string.substring(0, time_string.indexOf('T')).replace(/\-/g, '/');
     };
-    var start_time = get_time(event_data.start);
-    var end_time = get_time(event_data.end);
+    var start_time = get_time(event_data.start) + 3600*9*1000;
+    var end_time = get_time(event_data.end) + 3600*9*1000;
     user_events.map(function(e) {
         var e_start_time = get_time(e.start);
         var e_end_time = get_time(e.end);

@@ -44,6 +44,7 @@ $(window).on('load', function() {
 
             }
         });
+        $('.fc-time-grid-container').scrollTop(264);
     };
    
     var check_sign = setInterval(function() {
