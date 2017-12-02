@@ -5,6 +5,7 @@
 <script src= "/libs/moment/moment-with-locales.min.js"></script>
 <script src= "/libs/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
 <script src= "/libs/async.js"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXfi1nvZAd4r77rx_FCeHasUDIR8GrnEk"></script>
 <script src= "/javascripts/recommendation.js"></script>
 <link rel = "stylesheet" href="/libs/font-awesome/css/font-awesome.css">
 <link rel = "stylesheet" href = "/libs/bootstrap/css/bootstrap.css">
@@ -46,7 +47,7 @@
                         <span class="input-group-addon">Category</span>
                         <div class="event_category">
                             <label for="concert">
-                                <input type="checkbox" id="consert" value="콘서트"> Concert
+                                <input type="checkbox" id="concert" value="콘서트"> Concert
                             </label>
                             <label for="festival">
                                 <input type="checkbox" id="festival" value="축제"> Festival
@@ -78,7 +79,7 @@
                     <button id="recommend_btn" class="btn btn-default btn-lg col-xs-4"> Recommend For Me!</button>
                     <div class="col-xs-4"></div>
                 </div>
-                <div class="loader"></div>
+                <div class="loader page_loader"></div>
             </div>
 
 
@@ -87,6 +88,22 @@
     </div>
 </section>
 <!-- Modal -->
+<div class="modal fade" id="mapModal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><i class="fa fa-times"></i></button>
+                <h4 class="modal-title">Map</h4>
+            </div>
+            <div class="modal-body">
+                <div class="map_loader loader"></div>
+                <div id="map"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="datemodal" role="dialog">
     <div class="modal-dialog col-xs-10">
         <!-- Modal content-->

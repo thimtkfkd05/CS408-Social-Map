@@ -1,13 +1,19 @@
 var user_id;
 var all_events;
 var card_template = function(e) {
+    e.start = new Date(new Date(e.start).getTime() + 3600*1000*9).toISOString();
+    e.end = new Date(new Date(e.end).getTime() + 3600*1000*9).toISOString();
     return [
         '<div class="col-xs-6 event_card">',
             '<h3>' + e.title + '</h2>',
             '<div class="event_desc">',
                 e.description,
+                '<br><br>',
+                'Schedule : ', e.open_day + ' ~ ' + e.close_day + ' / ' + e.start.substring(e.start.indexOf('T')+1, e.start.indexOf(':00.000Z')) + ' ~ ' + e.end.substring(e.end.indexOf('T')+1, e.end.indexOf(':00.000Z')),,
+                (e.place && e.place.lat !== null ? '<br><br>Place : ' + '<a class="map-view" data-toggle="modal" data-target="#mapModal" data-lat="' + e.place.lat + '" data-lng="' + e.place.lng + '">' + '<i class="fa fa-map-marker"' + '></i> View Map' + '</a>' : ''),
+                (e.url ? '<br><br>Homepage : ' + '<a href="' + e.url + '" target="_blank">click here</a>' : ''),
             '</div>',
-            '<button class="btn btn-default btn-lg' + (e.open_day !== e.close_day ? ' add_event_modal' : ' add_event') + '" data-id="' + e.id + (e.open_day !== e.close_day ? '" data-toggle = "modal" data-target ="#datemodal"' : ' ') + '>Join this Event</button>',
+            '<button class="btn btn-default btn-lg' + (e.open_day !== e.close_day ? ' add_event_modal' : ' add_event') + '" data-id="' + e.id + (e.open_day !== e.close_day ? '" data-toggle = "modal" data-target ="#datemodal"' : '"') + '>Join this Event</button>',
         '</div>'
     ].join('');
 };
@@ -15,7 +21,7 @@ var card_template = function(e) {
 var make_event_html = function(events) {
     var card_html = '';
     $('.div_page').remove();
-    $('.loader').show();
+    $('.page_loader').show();
     events.map(function(item, idx) {
         if (idx % 10 == 0) {
             card_html += '<div class="div_page page_' + parseInt(idx / 10, 10) + '" style="display: none;">';
@@ -29,7 +35,7 @@ var make_event_html = function(events) {
             card_html += '</div>';
         }
     });
-    $('.loader').hide();
+    $('.page_loader').hide();
     $('#recommendation').append(card_html);
     $('.page_0').show();
 };
@@ -169,3 +175,26 @@ $(document).on('click', '#recommend_btn', function() {
         }
     })
 });
+
+$(document).on('click','.map-view', function () {
+    var place = {
+        lat: $(this).data('lat'),
+        lng: $(this).data('lng')
+    };
+    $('#mapModal').on('shown.bs.modal',function () {
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 17,
+            center: place
+        });
+
+        var marker = new google.maps.Marker({
+            position: place,
+            map: map
+        });
+        $('.map_loader').hide();
+    }).on('hidden.bs.modal', function(){
+        $('#map').empty();
+        $('.map_loader').show();
+    });
+});
+

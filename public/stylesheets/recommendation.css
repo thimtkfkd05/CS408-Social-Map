@@ -72,6 +72,9 @@ section > .container {
     left: 0;
     right: 0;
 }
+.loader.map_loader {
+    top: 0;
+}
 
 @keyframes spin {
     0% { transform: rotate(0deg); }
@@ -134,7 +137,7 @@ section > .container {
     text-align: center;
 }
 
-.modal-dialog{
+#datemodal .modal-dialog{
     width : 30%;
     height : 30%;
     margin-top : 15%;
@@ -147,4 +150,48 @@ section > .container {
 .date_title{
     text-align : center;
     margin-top: 7px;
+}
+
+#mapModal .modal-dialog {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#mapModal .modal-content{
+    height: auto;
+    min-height: 100%;
+    border: none;
+}
+
+#mapModal .modal-header{
+    height: 50px;
+}
+
+#mapModal .modal-header .close{
+    margin: 0;
+}
+
+#mapModal .modal-body{
+    padding: 0;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+#map {
+    width: 100%;
+    height: calc( 100vh - 52px );
+}
+
+#mapModal {
+    padding: 0;
+    margin: 50px 200px;
+    border-radius: 5px;
+}
+
+.map-view {
+    cursor: pointer;
 }

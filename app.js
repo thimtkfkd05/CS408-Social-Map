@@ -141,8 +141,7 @@ var script_simple = function(db) {
                 description: item.description
             }, {
                 $set: {
-                    user_id: [],
-                    id: make_random_string(26)
+                    description: item.description.replace('Homepage : ' + (item.url || ''), '')
                 }
             }, function(update_err, result) {
                 console.log('update complete! ', update_err, idx);

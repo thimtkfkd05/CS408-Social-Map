@@ -72,6 +72,9 @@ exports.event_get = function(req, res) {
             open: false
         }, {
             user_id: req.session.user_id,
+            open: 'false'
+        }, {
+            user_id: req.session.user_id,
             id: new RegExp('_' + req.session.user_id + '$')
         }]
     }).toArray(function(err, results) {
@@ -181,7 +184,7 @@ exports.event_edit = function(req, res) {
                     Allday: result.Allday || false,
                     place: result.place || {lat: null, lng: null},
                     description: result.description || '',
-                    open: result.open || false,
+                    open: String(result.open) == 'true',
                 });
             }
             else {
@@ -194,10 +197,17 @@ exports.event_edit = function(req, res) {
 exports.get_open_event = function(req, res) {
     var db_event = req.app.get('db').collection('Heroes');
     db_event.find({
-        open: true,
-        user_id: {
-            $ne: req.session.user_id
-        }
+        $or: [{
+            open: true,
+            user_id: {
+                $ne: req.session.user_id
+            }
+        }, {
+            open: 'true',
+            user_id: {
+                $ne: req.session.user_id
+            }
+        }]
     }, {
         _id: 0
     }).toArray(function(err, results) {
@@ -262,13 +272,15 @@ exports.recommend_event = function(req, res) {
     var db_event = req.app.get('db').collection('Heroes');
     var now_date = new Date();
     var now_string = now_date.toISOString();
+    var now_day = new Date(now_string.substring(0, now_string.indexOf('T'))).toISOString();
     var final_date = new Date(now_date.getTime() + 3600 * 1000 * 24 * 14);
     var final_string = final_date.toISOString();
+    var final_day = new Date(final_string.substring(0, final_string.indexOf('T'))).toISOString();
     db_event.find({
         open: true,
         user_id: {
             $ne: req.session.user_id
-            },
+        },
         end: {
             $gt: now_string
         },
@@ -276,10 +288,10 @@ exports.recommend_event = function(req, res) {
             $lt: final_string
         },
         open_day: {
-            $lt: new Date(final_string.substring(0, final_string.indexOf('T'))).toISOString()
+            $lt: final_day
         },
         close_day: {
-            $gt: new Date(now_string.substring(0, now_string.indexOf('T'))).toISOString()
+            $gt: now_day
         }
     }, {
         _id: 0
@@ -291,10 +303,10 @@ exports.recommend_event = function(req, res) {
             db_event.find({
                 user_id: req.session.user_id,
                 end: {
-                    $gt: now_date.toISOString()
+                    $gt: now_string
                 },
                 start: {
-                    $lt: new Date(now_date.getTime() + 3600 * 24 * 14 * 1000).toISOString()
+                    $lt: final_string
                 }
             }, {
                 id: 1,
@@ -309,21 +321,33 @@ exports.recommend_event = function(req, res) {
                 } else {
                     var event_score = [];
                     var now_time = now_date.getTime();
-                    open_events = [open_events[0]];
-                    console.log(open_events);
+                    //open_events = [open_events[0]]; // for DEBUG
+                    console.log(open_events.length);
                     
                     open_events.map(function(open_e) {
-                        event_score[open_e.id] = 100;
+                        event_score[open_e.id] = 0;
                         var open_len_time = new Date(open_e.close_day).getTime() - new Date(open_e.open_day).getTime();
                         var open_len = parseInt(open_len_time / 86400000, 10) + 1;
-                        var open_e_start = new Date(open_e.start).getTime();
-                        var open_e_end = new Date(open_e.end).getTime() - open_len_time + 86400000;
+                        if (open_len > 14) {
+                            open_len_time = 86400000 * 14;
+                            open_len = 14;
+                        }
+                        var open_e_start, open_e_end;
+                        if (new Date(open_e.open_day).getTime() < new Date(now_day).getTime()) {
+                            open_e_start = new Date(open_e.start).getTime() - new Date(open_e.open_day).getTime() + new Date(now_day).getTime()
+                        } else {
+                            open_e_start = new Date(open_e.start).getTime();
+                        }
+                        if (new Date(open_e.close_day).getTime() > new Date(final_day).getTime()) {
+                            open_e_end = new Date(open_e.end).getTime() - open_len_time + 86400000 - new Date(open_e.close_day).getTime() + new Date(final_day).getTime();
+                        } else {
+                            open_e_end = new Date(open_e.end).getTime() - open_len_time + 86400000;
+                        }
                         var open_e_total = open_e_end - open_e_start;
                         user_events.map(function(user_e, idx) {
                             var user_e_start = new Date(user_e.start).getTime();
                             var user_e_end = new Date(user_e.end).getTime();
-                            var inner_score = 100;
-                            console.log(user_e_start, user_e_end, open_e_start, open_e_end, open_len, open_e_total);
+                            //console.log(user_e_start, user_e_end, open_e_start, open_e_end, open_len, open_e_total);
                             for (var i = 0; i < open_len; i++) {
                                 var inner_open_e_start = open_e_start + (i * 86400000);
                                 var inner_open_e_end = open_e_end + (i * 86400000);
@@ -349,11 +373,12 @@ exports.recommend_event = function(req, res) {
                                     }
                                 }
                                 var score = parseInt(overlap / open_e_total / 1000 * 100000, 10);
-                                if (score < inner_score) {
-                                    inner_score = score;
+                                //console.log(overlap, open_e_total, score);
+                                if (event_score[open_e.id] > score) {
+                                    event_score[open_e.id] = score;
                                 }
+                                //console.log("after: ", score, event_score[open_e.id]);
                             }
-                            event_score[open_e.id] += inner_score;
                         });
                         console.log(open_e.id, event_score[open_e.id]);
                     });
