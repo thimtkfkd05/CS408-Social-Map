@@ -159,7 +159,10 @@ $(document).on('click', '.add_event_modal', function() {
 
     var overlap_day_list = [];
     var get_time = function(time_string) {
-        return new Date(time_string.substring(time_string.indexOf('T'), time_string.length)).getTime();
+        return new Date('1970-01-01' + time_string.substring(time_string.indexOf('T'), time_string.length)).getTime();
+    };
+    var get_day = function(time_string) {
+        return time_string.substring(0, time_string.indexOf('T')).replace(/\-/g, '/');
     };
     var start_time = get_time(event_data.start);
     var end_time = get_time(event_data.end);
@@ -168,13 +171,12 @@ $(document).on('click', '.add_event_modal', function() {
         var e_end_time = get_time(e.end);
         if (start_time < e_start_time < end_time || start_time < e_end_time < end_time || e_start_time < start_time < e_end_time || e_start_time < end_time < e_end_time) {
             var date = new Date(e.end);
-            overlap_day_list.push(date.getFullYear() + '/' + (date.getMonth()+1) + '/' + date.getDate());
+            overlap_day_list.push(get_day(e.end));
         }
     });
-
+    
     $(document).on('click', '.join_btn', function () {
         var selected_day = $('#select_date').data().date;
-        
         if (!selected_day || overlap_day_list.indexOf(selected_day) > -1 || new Date(selected_day) < new Date(event_data.open_day) || new Date(selected_day) > new Date(event_data.close_day)) {
             $('.warning_msg').show();
             setTimeout(function () {
