@@ -242,9 +242,8 @@ exports.add_open_event = function(req, res) {
     var db_event = req.app.get('db').collection('Heroes');
     var user_id = req.session.user_id;
     var need_day_select = !!req.body.selected_day;
-    var selected_date = need_day_select ? new Date(req.body.selected_day).toISOString() : '';
+    var selected_date = need_day_select ? new Date(new Date(req.body.selected_day).getTime() + 3600*9*1000).toISOString() : '';
     var selected_day = need_day_select ? selected_date.substring(0, selected_date.indexOf('T')) : '';
-
     db_event.findOne({
         id: req.body.id,
         open: true
