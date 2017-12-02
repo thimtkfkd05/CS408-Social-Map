@@ -93,7 +93,7 @@ exports.event_get = function(req, res) {
 
 exports.event_save = function(req, res) {
     var db_event = req.app.get('db').collection('Heroes');
-
+    console.log(req.body);
     if (req.body.id) {
         var event_data = req.body;
         event_data.user_id = req.session.user_id;

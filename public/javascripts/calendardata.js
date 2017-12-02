@@ -27,7 +27,7 @@ $(document).on('click',".save",function (e) {
         data['description'] = document.getElementById("description").value;
         data['place'] = marker_locate;
         data['id'] = id !== 'new' ? id : make_random_string(26);
-        data['open'] = $('#open').attr('checked') || false;
+        data['open'] = $('#open').prop('checked');
         data['user_id'] = gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getId();
         console.log(data);
 
