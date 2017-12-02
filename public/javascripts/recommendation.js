@@ -159,19 +159,25 @@ $(document).on('click', '.add_event_modal', function() {
 
     var overlap_day_list = [];
     var get_user_time = function(time_string) {
-        return new Date(time_string).getTime();
+        return new Date(time_string).getTime() - 3600*9000;
+    };
+    var get_event_date = function(user_time, time_string) {
+        var user_string = new Date(user_time).toISOString();
+        var user_day = user_string.substring(0, user_string.indexOf('T'));
+        var event_time_string = time_string.substring(time_string.indexOf('T'), time_string.length);
+        return user_day + event_time_string;
     };
     var get_event_time = function(time_string) {
-        return new Date(event_data.start).getTime() + 3600*9*1000;
+        return new Date(time_string).getTime();
     };
     var get_day = function(time_string) {
         return time_string.substring(0, time_string.indexOf('T')).replace(/\-/g, '/');
     };
-    var start_time = get_event_time(event_data.start);
-    var end_time = get_event_time(event_data.end);
     user_events.map(function(e) {
         var e_start_time = get_user_time(e.start);
         var e_end_time = get_user_time(e.end);
+        var start_time = get_event_time(get_event_date(e_start_time, event_data.start));
+        var end_time = get_event_time(get_event_date(e_end_time, event_data.end));
         if (start_time < e_start_time < end_time || start_time < e_end_time < end_time || e_start_time < start_time < e_end_time || e_start_time < end_time < e_end_time) {
             overlap_day_list.push(get_day(e.end));
         }
