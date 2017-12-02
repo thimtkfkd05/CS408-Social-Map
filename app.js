@@ -134,14 +134,23 @@ function make_random_string(num) {
 var script_simple = function(db) {
     var db_event = db.collection('Heroes');
     db_event.find({
-        open: true
+        $or: [{
+            open: 'true'
+        }, {
+            open: 'false'
+        }, {
+            Allday: 'true'
+        }, {
+            Allday: 'false'
+        }]
     }).toArray(function(err, res) {
         res.map(function(item, idx) {
             db_event.update({
-                description: item.description
+                id: item.id
             }, {
                 $set: {
-                    description: item.description.replace('Homepage : ' + (item.url || ''), '')
+                    open: String(item.open) == 'true',
+                    Allday: String(item.Allday) == 'true'
                 }
             }, function(update_err, result) {
                 console.log('update complete! ', update_err, idx);

@@ -115,8 +115,8 @@
         
         $('#title').val(title);
         $('#description').val(description);
-        $('#inlineCheckbox1').attr('checked', Allday);
-        $('#open').attr('checked', open);
+        $('#inlineCheckbox1').prop('checked', Allday);
+        $('#open').prop('checked', open);
         start && $('#datetimepicker1').data('DateTimePicker').date(start);
         end && $('#datetimepicker2').data('DateTimePicker').date(end);
         place = place ? JSON.parse(place) : null;

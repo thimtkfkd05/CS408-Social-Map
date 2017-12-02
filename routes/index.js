@@ -101,6 +101,7 @@ exports.event_save = function(req, res) {
             id: event_data.id
         }, function(find_err, find_result) {
             if (find_result) {
+                event_data.open = String(event_data.open) == 'true';
                 var update_option = {
                     $set: {
                         title: event_data.title,
@@ -109,7 +110,7 @@ exports.event_save = function(req, res) {
                         Allday: String(event_data.Allday) == 'true',
                         description: event_data.description,
                         place: event_data.place,
-                        open: String(event_data.open) == 'true'
+                        open: event_data.open
                     }
                 };
 
@@ -118,7 +119,7 @@ exports.event_save = function(req, res) {
                         user_id: event_data.user_id
                     }
                 }
-                if (event_data.open) {
+                if (event_data.open && event_data.id.indexOf('__' + event_data.user_id) < 0) {
                     update_option['$set'].id = event_data.id + '__' + event_data.user_id;
                 } else if (event_data.open !== find_result.open) {
                     update_option['$set'].id = event_data.id.substring(0, event_data.id.indexOf('__' + event_data.user_id));
