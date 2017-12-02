@@ -57,7 +57,6 @@ var shorten_events = function(events) {
 $.get('/event_get', {}, function(results) {
     if (results) {
         user_events = results;
-        console.log(user_events);
     }
 });
 
@@ -66,7 +65,6 @@ $(window).on('load', function() {
     var getId = setInterval(function() {
         if (!check && gapi.auth2.getAuthInstance().currentUser.get().getId()) {
             check = true;
-            //$.get('/get_open_event', {
             $.post('/recommend_event', {
                 user_id: gapi.auth2.getAuthInstance().currentUser.get().getId()
             }, function(events) {
@@ -79,7 +77,7 @@ $(window).on('load', function() {
     
     var page = 1;
     $(window).scroll(function() {
-        if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+        if (Math.round($(window).scrollTop()) == $(document).height() - $(window).height()) {
             $('.page_' + page).length && $('.page_' + page).show();
             $('.event_desc .desc_detail').map(function(idx, obj) {
                 if ($(obj).height() > 100) {
@@ -159,15 +157,6 @@ $(document).on('click', '.add_event_modal', function() {
         });
     });
 
-    // not working yet
-    $(document).on('change', '#select_date', function() {
-        var selected_date = new Date($(this).data().date).getTime();
-        var selected_start = new Date(event_data.start).getTime() - new Date(event_data.open_day).getTime();
-        console.log(new Date(selected_date), new Date(selected_start), new Date(selected_start + selected_date));
-        user_events.map(function(item) {
-        });
-    });
-
     $(document).on('click', '.join_btn', function () {
         var selected_day = $('#select_date').data().date;
         if (!selected_day || new Date(selected_day) < new Date(event_data.open_day) || new Date(selected_day) > new Date(event_data.close_day)) {
@@ -184,7 +173,7 @@ $(document).on('click', '.add_event_modal', function() {
                 else location.reload();
             })
         }
-    })
+    });
 });
 
 $(document).on('click', '.add_event', function() {
@@ -203,7 +192,7 @@ $(document).on('click', '#recommend_btn', function() {
             all_events = recommended_events;
             make_event_html(recommended_events);
         }
-    })
+    });
 });
 
 $(document).on('click','.map-view', function () {

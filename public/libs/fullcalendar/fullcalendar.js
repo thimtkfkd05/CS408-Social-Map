@@ -17633,7 +17633,7 @@ var ListViewGrid = Grid.extend({
 			url = seg.footprint.eventDef.url;
 
 			if (url && !ev.isDefaultPrevented()) { // jsEvent not cancelled in handler
-				window.location.href = url; // simulate link click
+				//window.location.href = url; // simulate link click
 			}
 		}
 	},
