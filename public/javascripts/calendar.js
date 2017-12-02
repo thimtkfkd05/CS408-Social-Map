@@ -253,7 +253,6 @@ $(document).on('click', '.export_btn', function() {
 
     gapi.client.load('calendar', 'v3', function() {
         gapi.client.calendar.calendarList.list({}).execute(function(cal_list) {
-        //$.get('https://www.googleapis.com/calendar/v3/users/me/calendarList', {}, function(cal_list) {
             if (cal_list && !cal_list.error) {
                 cal_list.items.some(function(cal) {
                     if (cal.accessRole == 'owner') {
@@ -266,8 +265,8 @@ $(document).on('click', '.export_btn', function() {
                 
                 var place = '';
                 var export_work = function() {
-                    var start_time = new Date(ex_event.start).getTime() + 3600*9*1000;
-                    var end_time = new Date(ex_event.end).getTime() + 3600*9*1000;
+                    var start_time = new Date(ex_event.start).getTime() - 3600*9*1000;
+                    var end_time = new Date(ex_event.end).getTime() - 3600*9*1000;
                     var options = {
                         calendarId: calendarId,
                         iCalUID: ex_event.id + '@google.com',
