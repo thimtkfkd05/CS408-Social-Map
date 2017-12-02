@@ -3,7 +3,6 @@ section > .container {
     top: 50px;
     padding-top: 15px;
     width: 100%;
-    overflow-x: hidden;
 }
 
 .event_search_wrapper, .event_category_wrapper {

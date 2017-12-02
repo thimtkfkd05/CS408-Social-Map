@@ -186,7 +186,20 @@ exports.event_remove = function(req, res) {
     var db_event = req.app.get('db').collection('Heroes');
     db_event.remove(req.body, function(err, result) {
         if (err) console.log(err);
-        res.json(err);
+        if (req.body.id.indexOf('_by_user_' + req.session.user_id) > -1) {
+            db_event.update({
+                id: req.body.id.substring(0, req.body.id.indexOf('_by_user_'))
+            }, {
+                $pull: {
+                    user_id: req.session.user_id
+                }
+            }, function(update_err, update_result) {
+                if (update_err) console.log(update_err);
+                res.json(update_err);
+            });
+        } else {
+            res.json(null);
+        }
     });
 };
 
@@ -287,7 +300,7 @@ exports.recommend_event = function(req, res) {
     var now_date = new Date();
     var now_string = now_date.toISOString();
     var now_day = new Date(now_string.substring(0, now_string.indexOf('T'))).toISOString();
-    var final_date = new Date(now_date.getTime() + 3600 * 1000 * 24 * 14);
+    var final_date = new Date(now_date.getTime() + 3600 * 1000 * 24 * 7);
     var final_string = final_date.toISOString();
     var final_day = new Date(final_string.substring(0, final_string.indexOf('T'))).toISOString();
     db_event.find({
@@ -316,85 +329,159 @@ exports.recommend_event = function(req, res) {
         } else {
             db_event.find({
                 user_id: req.session.user_id,
-                end: {
-                    $gt: now_string
-                },
-                start: {
-                    $lt: final_string
-                }
+                open: true,
+                category: {$exists: true}
             }, {
-                id: 1,
-                start: 1,
-                end: 1,
-                place: 1
-            }).toArray(function(_err, user_events) {
-                if (_err) {
-                    console.log(_err);
+                category: 1
+            }).toArray(function(category_err, category_results) {
+                if (category_err) {
+                    console.log(category_err);
                     res.json(null);
                 } else {
-                    var event_score = [];
-                    var now_time = now_date.getTime();
-                    
-                    open_events.map(function(open_e) {
-                        event_score[open_e.id] = 0;
-                        var open_len_time = new Date(open_e.close_day).getTime() - new Date(open_e.open_day).getTime();
-                        var open_len = parseInt(open_len_time / 86400000, 10) + 1;
-                        if (open_len > 14) {
-                            open_len_time = 86400000 * 14;
-                            open_len = 14;
-                        }
-                        var open_e_start, open_e_end;
-                        if (new Date(open_e.open_day).getTime() < new Date(now_day).getTime()) {
-                            open_e_start = new Date(open_e.start).getTime() - new Date(open_e.open_day).getTime() + new Date(now_day).getTime()
-                        } else {
-                            open_e_start = new Date(open_e.start).getTime();
-                        }
-                        if (new Date(open_e.close_day).getTime() > new Date(final_day).getTime()) {
-                            open_e_end = new Date(open_e.end).getTime() - open_len_time + 86400000 - new Date(open_e.close_day).getTime() + new Date(final_day).getTime();
-                        } else {
-                            open_e_end = new Date(open_e.end).getTime() - open_len_time + 86400000;
-                        }
-                        var open_e_total = open_e_end - open_e_start;
-                        user_events.map(function(user_e, idx) {
-                            var user_e_start = new Date(user_e.start).getTime();
-                            var user_e_end = new Date(user_e.end).getTime();
-                            for (var i = 0; i < open_len; i++) {
-                                var inner_open_e_start = open_e_start + (i * 86400000);
-                                var inner_open_e_end = open_e_end + (i * 86400000);
-                                var overlap;
-                                if (inner_open_e_end <= user_e_start || inner_open_e_start >= user_e_end) {
-                                    // no overlap
-                                    overlap = 0;
-                                } else {
-                                    if (inner_open_e_start >= user_e_start && inner_open_e_end <= user_e_end) {
-                                        // all overlap
-                                        overlap = open_e_total;
-                                    } else {
-                                        //some overlap
-                                        if (inner_open_e_start <= user_e_start && inner_open_e_end >= user_e_end) {
-                                            overlap = user_e_end - user_e_start;
-                                        } else {
-                                            if (inner_open_e_start <= user_e_start) {
-                                                overlap = inner_open_e_end - user_e_start;
-                                            } else {
-                                                overlap = user_e_end - inner_open_e_start;
-                                            }
-                                        }
-                                    }
-                                }
-                                var score = parseInt(overlap / open_e_total / 1000 * 100000, 10);
-                                if (event_score[open_e.id] > score) {
-                                    event_score[open_e.id] = score;
-                                }
-                            }
-                        });
+                    var category = {
+                        '콘서트': 0,
+                        '축제': 0,
+                        '모임': 0,
+                        '설명회': 0,
+                        '뮤지컬': 0,
+                        '전시': 0,
+                        '연극': 0,
+                        '기타': 0
+                    };
+                    category_results.map(function(val) {
+                        category[val.category]++;
                     });
 
-                    var sorted_results = open_events.sort(function(a, b) {
-                        return event_score[a.id] - event_score[b.id];
+                    db_event.find({
+                        user_id: req.session.user_id,
+                        end: {
+                            $gt: now_string
+                        },
+                        start: {
+                            $lt: final_string
+                        }
+                    }, {
+                        id: 1,
+                        start: 1,
+                        end: 1,
+                        place: 1
+                    }).toArray(function(_err, user_events) {
+                        if (_err) {
+                            console.log(_err);
+                            res.json(null);
+                        } else {
+                            var event_score = [];
+                            var now_time = now_date.getTime();
+                            var get_distance = function(prev_place, next_place) {
+                                if (prev_place && prev_place.lat && next_place && next_place.lat) {
+                                    var lat1 = prev_place.lat;
+                                    var lon1 = prev_place.lng;
+                                    var lat2 = next_place.lat;
+                                    var lon2 = next_place.lng;
+                                    var pi_180 = 0.017453292519943295;    // Math.PI / 180
+                                    var cos = Math.cos;
+                                    var a = 0.5 - cos((lat2 - lat1) * pi_180)/2 + cos(lat1 * pi_180) * cos(lat2 * pi_180) * (1 - cos((lon2 - lon1) * pi_180))/2;
+                                    return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
+                                } else {
+                                    return null;
+                                }
+                            };
+                            
+                            open_events.map(function(open_e) {
+                                event_score[open_e.id] = 0;
+                                var open_len_time = new Date(open_e.close_day).getTime() - new Date(open_e.open_day).getTime();
+                                var open_len = parseInt(open_len_time / 86400000, 10) + 1;
+                                if (open_len > 7) {
+                                    open_len_time = 86400000 * 7;
+                                    open_len = 7;
+                                }
+                                var open_e_start, open_e_end;
+                                if (new Date(open_e.open_day).getTime() < new Date(now_day).getTime()) {
+                                    open_e_start = new Date(open_e.start).getTime() - new Date(open_e.open_day).getTime() + new Date(now_day).getTime()
+                                } else {
+                                    open_e_start = new Date(open_e.start).getTime();
+                                }
+                                if (new Date(open_e.close_day).getTime() > new Date(final_day).getTime()) {
+                                    open_e_end = new Date(open_e.end).getTime() - open_len_time + 86400000 - new Date(open_e.close_day).getTime() + new Date(final_day).getTime();
+                                } else {
+                                    open_e_end = new Date(open_e.end).getTime() - open_len_time + 86400000;
+                                }
+                                var open_e_total = open_e_end - open_e_start;
+                                var time_score = 30;
+                                var place_score = 30;
+                                for (var i = 0; i < open_len; i++) {
+                                    var inner_open_e_start = open_e_start + (i * 86400000);
+                                    var inner_open_e_end = open_e_end + (i * 86400000);
+                                    var overlap = 0;
+                                    var prev_user_e = user_events[0], next_user_e = user_events[user_events.length-1];
+                                    var prev_gap = next_gap = 86400000 * 7;
+                                    user_events.map(function(user_e, idx) {
+                                        var user_e_start = new Date(user_e.start).getTime();
+                                        var user_e_end = new Date(user_e.end).getTime();
+                                        var user_e_overlap;
+                                        if (inner_open_e_end <= user_e_start || inner_open_e_start >= user_e_end) {
+                                            // no overlap
+                                            user_e_overlap = 0;
+                                        } else {
+                                            if (inner_open_e_start >= user_e_start && inner_open_e_end <= user_e_end) {
+                                                // all overlap
+                                                user_e_overlap = open_e_total;
+                                            } else {
+                                                //some overlap
+                                                if (inner_open_e_start <= user_e_start && inner_open_e_end >= user_e_end) {
+                                                    user_e_overlap = user_e_end - user_e_start;
+                                                } else {
+                                                    if (inner_open_e_start <= user_e_start) {
+                                                        user_e_overlap = inner_open_e_end - user_e_start;
+                                                    } else {
+                                                        user_e_overlap = user_e_end - inner_open_e_start;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        if (0 < inner_open_e_start - user_e_end < prev_gap) {
+                                            prev_gap = inner_open_e_start - user_e_end;
+                                            prev_user_e = user_e;
+                                        } else if (0 < user_e_start - inner_open_e_end < next_gap) {
+                                            next_gap = user_e_start - inner_open_e_end;
+                                            next_user_e = user_e;
+                                        }
+                                        overlap += user_e_overlap;
+                                    });
+                                    var inner_time_score = parseInt(overlap / open_e_total / 1000 * 30000, 10);
+                                    var inner_place_score = 30;
+                                    var dist1 = get_distance(prev_user_e.place, open_e.place);
+                                    var dist2 = get_distance(open_e.place, next_user_e.place);
+                                    if (dist1 !== null && dist2 !== null) {
+                                        if (dist1 > 12) dist1 = 12;
+                                        if (dist2 > 12) dist2 = 12;
+                                        inner_place_score = parseInt((dist1 + dist2) / 24 / 1000 * 30000, 10);
+                                    } else if (dist1 !== null || dist2 !== null) {
+                                        if (dist1 == null) dist1 = dist2;
+                                        else if (dist2 == null) dist2 = dist1;
+                                        inner_place_score = parseInt((dist1 + dist2) / 24 / 1000 * 30000, 10);
+                                    } else {
+                                        inner_place_score = 30;
+                                    }
+                                    if (time_score > inner_time_score) {
+                                        time_score = inner_time_score;
+                                    }
+                                    if (place_score > inner_place_score) {
+                                        place_score = inner_place_score;
+                                    }
+                                }
+                                var category_score = open_e.category && category_results.length ? 40 - parseInt(category[open_e.category] / category_results.length / 1000 * 40000, 10) : 40;
+                                console.log(open_e.id, time_score, place_score, category_score);
+                                event_score[open_e.id] = time_score + place_score + category_score;
+                            });
+
+                            var sorted_results = open_events.sort(function(a, b) {
+                                return event_score[a.id] - event_score[b.id];
+                            });
+                        
+                            res.json(sorted_results);
+                        }
                     });
-                
-                    res.json(sorted_results);
                 }
             });
         }

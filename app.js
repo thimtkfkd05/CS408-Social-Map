@@ -134,23 +134,19 @@ function make_random_string(num) {
 var script_simple = function(db) {
     var db_event = db.collection('Heroes');
     db_event.find({
-        $or: [{
-            open: 'true'
-        }, {
-            open: 'false'
-        }, {
-            Allday: 'true'
-        }, {
-            Allday: 'false'
-        }]
+        open: true,
+        open_day: {$exists: false},
+        close_day: {$exists: false}
     }).toArray(function(err, res) {
         res.map(function(item, idx) {
+            item.start = new Date(new Date(item.start).getTime() + 3600*9*1000).toISOString();
+            item.end = new Date(new Date(item.end).getTime() + 3600*9*1000).toISOString();
             db_event.update({
                 id: item.id
             }, {
                 $set: {
-                    open: String(item.open) == 'true',
-                    Allday: String(item.Allday) == 'true'
+                    open_day: item.start.substring(0, item.start.indexOf('T')),
+                    close_day: item.end.substring(0, item.end.indexOf('T'))
                 }
             }, function(update_err, result) {
                 console.log('update complete! ', update_err, idx);
@@ -170,10 +166,8 @@ var script_for_add_open_fb_event = function(db) {
         item.end = new Date(item.end_time).toISOString();
         item.title = item.name;
         item.description = item.description || item.title;
-        if (new Date(item.end_time).getTime() - new Date(item.start_time).getTime() > 3600 * 24 * 1000) {
-            item.open_day = new Date(item.start_time.substring(0, item.start_time.indexOf('T'))).toISOString();
-            item.close_day = new Date(item.end_time.substring(0, item.end_time.indexOf('T'))).toISOString();
-        }
+        item.open_day = item.start_time.substring(0, item.start_time.indexOf('T'));
+        item.close_day = item.end_time.substring(0, item.end_time.indexOf('T'));
         delete item.name;
         delete item.start_time;
         delete item.end_time;
