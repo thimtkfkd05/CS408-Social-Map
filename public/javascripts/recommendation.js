@@ -2,15 +2,15 @@ var user_id;
 var all_events;
 var user_events;
 var card_template = function(e) {
-    e.start = new Date(new Date(e.start).getTime() + 3600*1000*9).toISOString();
-    e.end = new Date(new Date(e.end).getTime() + 3600*1000*9).toISOString();
+    var start = new Date(new Date(e.start).getTime() + 3600*1000*9).toISOString();
+    var end = new Date(new Date(e.end).getTime() + 3600*1000*9).toISOString();
     return [
         '<div class="col-xs-6 event_card">',
             '<h3>' + e.title + '</h2>',
             '<div class="event_desc">',
                 '<div class="desc_detail">' + e.description + (e.url ? '<br><br>Homepage : ' + '<a href="' + e.url + '" target="_blank">click here</a>' : '')  + '</div>',
-                     '<br>',
-                'Schedule : ', e.open_day + ' ~ ' + e.close_day + ' / ' + e.start.substring(e.start.indexOf('T')+1, e.start.indexOf(':00.000Z')) + ' ~ ' + e.end.substring(e.end.indexOf('T')+1, e.end.indexOf(':00.000Z')),,
+                '<br>',
+                'Schedule : ', e.open_day + ' ~ ' + e.close_day + ' / ' + start.substring(start.indexOf('T')+1, start.indexOf(':00.000Z')) + ' ~ ' + end.substring(end.indexOf('T')+1, end.indexOf(':00.000Z')),,
                 (e.place && e.place.lat !== null ? '<br><br>Place : ' + '<a class="map-view" data-toggle="modal" data-target="#mapModal" data-lat="' + e.place.lat + '" data-lng="' + e.place.lng + '">' + '<i class="fa fa-map-marker"' + '></i> View Map' + '</a>' : ''),
             '</div>',
             '<button class="btn btn-default' + (e.open_day !== e.close_day ? ' add_event_modal' : ' add_event') + '" data-id="' + e.id + (e.open_day !== e.close_day ? '" data-toggle = "modal" data-target ="#datemodal"' : '"') + '>Join this Event</button>',
@@ -159,7 +159,10 @@ $(document).on('click', '.add_event_modal', function() {
 
     var overlap_day_list = [];
     var get_time = function(time_string) {
-        return new Date(time_string.substring(time_string.indexOf('T'), time_string.length)).getTime();
+        return new Date('1970-01-01' + time_string.substring(time_string.indexOf('T'), time_string.length)).getTime();
+    };
+    var get_day = function(time_string) {
+        return time_string.substring(0, time_string.indexOf('T')).replace(/\-/g, '/');
     };
     var start_time = get_time(event_data.start);
     var end_time = get_time(event_data.end);
@@ -168,13 +171,12 @@ $(document).on('click', '.add_event_modal', function() {
         var e_end_time = get_time(e.end);
         if (start_time < e_start_time < end_time || start_time < e_end_time < end_time || e_start_time < start_time < e_end_time || e_start_time < end_time < e_end_time) {
             var date = new Date(e.end);
-            overlap_day_list.push(date.getFullYear() + '/' + (date.getMonth()+1) + '/' + date.getDate());
+            overlap_day_list.push(get_day(e.end));
         }
     });
-
+    
     $(document).on('click', '.join_btn', function () {
         var selected_day = $('#select_date').data().date;
-        
         if (!selected_day || overlap_day_list.indexOf(selected_day) > -1 || new Date(selected_day) < new Date(event_data.open_day) || new Date(selected_day) > new Date(event_data.close_day)) {
             $('.warning_msg').show();
             setTimeout(function () {
