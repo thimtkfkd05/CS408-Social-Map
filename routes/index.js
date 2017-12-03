@@ -353,19 +353,33 @@ exports.recommend_event = function(req, res) {
                     });
 
                     db_event.find({
-                        user_id: req.session.user_id,
-                        end: {
-                            $gt: now_string
-                        },
-                        start: {
-                            $lt: final_string
-                        }
-                    }, {
-                        id: 1,
-                        start: 1,
+                        $or: [{
+                            user_id: req.session.user_id,
+                            end: {
+                                $gt: now_string
+                            },
+                            start: {
+                                $lt: final_string
+                            },
+                            open: false
+                        }, {
+
+                            user_id: req.session.user_id,
+                            end: {
+                                $gt: now_string
+                            },
+                            start: {
+                                $lt: final_string
+                            },
+                            open: true,
+                            id: new RegExp('__' + req.session.user_id)
+                        }]
+                    },{
+                        id :1,
+                        start : 1,
                         end: 1,
-                        place: 1
-                    }).toArray(function(_err, user_events) {
+                        place : 1
+                }).sort({start: -1}).toArray(function(_err, user_events) {
                         if (_err) {
                             console.log(_err);
                             res.json(null);
@@ -452,6 +466,9 @@ exports.recommend_event = function(req, res) {
                                     var inner_place_score = 30;
                                     var dist1 = get_distance(prev_user_e.place, open_e.place);
                                     var dist2 = get_distance(open_e.place, next_user_e.place);
+                                    if(open_e.id == "egy3njijfc111lwb4qixh8wng2"){
+                                        console.log(prev_user_e, next_user_e, dist1, dist2);
+                                    }
                                     if (dist1 !== null && dist2 !== null) {
                                         if (dist1 > 12) dist1 = 12;
                                         if (dist2 > 12) dist2 = 12;
@@ -471,7 +488,7 @@ exports.recommend_event = function(req, res) {
                                     }
                                 }
                                 var category_score = open_e.category && category_results.length ? 40 - parseInt(category[open_e.category] / category_results.length / 1000 * 40000, 10) : 40;
-                                console.log(open_e.id, time_score, place_score, category_score);
+                                console.log(open_e.title, time_score, place_score, category_score);
                                 event_score[open_e.id] = time_score + place_score + category_score;
                             });
 
