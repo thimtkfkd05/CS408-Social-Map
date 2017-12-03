@@ -51,7 +51,7 @@ app.use(session({
     resave: false,
     saveUninitialized: true
 }));
-app.use(logger('dev'));
+app.use(logger(':method :url :status :response-time ms - :res[content-length] :date[iso]'));
 app.use(bodyParser.urlencoded({
   extended: true
 }));
