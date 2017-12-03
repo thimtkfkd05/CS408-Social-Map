@@ -120,7 +120,8 @@ section > .container {
 
 .date_title{
     text-align : center;
-    margin-top: 7px;
+    margin: 7px 10px 0 -10px;
+    padding: 0;
 }
 
 #mapModal .modal-dialog {
@@ -131,8 +132,7 @@ section > .container {
 }
 
 #mapModal .modal-content{
-    height: auto;
-    min-height: 100%;
+    height: 100%;
     border: none;
 }
 
@@ -145,6 +145,7 @@ section > .container {
 }
 
 #mapModal .modal-body{
+    height: calc(100% - 50px);
     padding: 0;
     top: 0;
     bottom: 0;
@@ -154,7 +155,7 @@ section > .container {
 
 #map {
     width: 100%;
-    height: calc( 100vh - 52px );
+    height: 100%;
 }
 
 #mapModal {
@@ -169,4 +170,7 @@ section > .container {
 
 #descModal .modal-content {
     margin-top: 25%;
+}
+#descModal .modal-body {
+    padding: 20px;
 }

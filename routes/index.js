@@ -93,7 +93,6 @@ exports.event_get = function(req, res) {
 
 exports.event_save = function(req, res) {
     var db_event = req.app.get('db').collection('Heroes');
-    console.log(req.body);
     if (req.body.id) {
         var event_data = req.body;
         event_data.user_id = req.session.user_id;
@@ -372,14 +371,14 @@ exports.recommend_event = function(req, res) {
                                 $lt: final_string
                             },
                             open: true,
-                            id: new RegExp('__' + req.session.user_id)
+                            id: new RegExp('__' + req.session.user_id + '$')
                         }]
                     },{
                         id :1,
                         start : 1,
                         end: 1,
                         place : 1
-                }).sort({start: -1}).toArray(function(_err, user_events) {
+                    }).sort({start: -1}).toArray(function(_err, user_events) {
                         if (_err) {
                             console.log(_err);
                             res.json(null);
@@ -423,69 +422,72 @@ exports.recommend_event = function(req, res) {
                                 var open_e_total = open_e_end - open_e_start;
                                 var time_score = 30;
                                 var place_score = 30;
-                                for (var i = 0; i < open_len; i++) {
-                                    var inner_open_e_start = open_e_start + (i * 86400000);
-                                    var inner_open_e_end = open_e_end + (i * 86400000);
-                                    var overlap = 0;
-                                    var prev_user_e = user_events[0], next_user_e = user_events[user_events.length-1];
-                                    var prev_gap = next_gap = 86400000 * 7;
-                                    user_events.map(function(user_e, idx) {
-                                        var user_e_start = new Date(user_e.start).getTime();
-                                        var user_e_end = new Date(user_e.end).getTime();
-                                        var user_e_overlap;
-                                        if (inner_open_e_end <= user_e_start || inner_open_e_start >= user_e_end) {
-                                            // no overlap
-                                            user_e_overlap = 0;
-                                        } else {
-                                            if (inner_open_e_start >= user_e_start && inner_open_e_end <= user_e_end) {
-                                                // all overlap
-                                                user_e_overlap = open_e_total;
+                                
+                                if (user_events && user_events.length) {
+                                    for (var i = 0; i < open_len; i++) {
+                                        var inner_open_e_start = open_e_start + (i * 86400000);
+                                        var inner_open_e_end = open_e_end + (i * 86400000);
+                                        var overlap = 0;
+                                        var prev_user_e = user_events[0], next_user_e = user_events[user_events.length-1];
+                                        var prev_gap = next_gap = 86400000 * 7;
+                                        user_events.map(function(user_e, idx) {
+                                            var user_e_start = new Date(user_e.start).getTime();
+                                            var user_e_end = new Date(user_e.end).getTime();
+                                            var user_e_overlap;
+                                            if (inner_open_e_end <= user_e_start || inner_open_e_start >= user_e_end) {
+                                                // no overlap
+                                                user_e_overlap = 0;
                                             } else {
-                                                //some overlap
-                                                if (inner_open_e_start <= user_e_start && inner_open_e_end >= user_e_end) {
-                                                    user_e_overlap = user_e_end - user_e_start;
+                                                if (inner_open_e_start >= user_e_start && inner_open_e_end <= user_e_end) {
+                                                    // all overlap
+                                                    user_e_overlap = open_e_total;
                                                 } else {
-                                                    if (inner_open_e_start <= user_e_start) {
-                                                        user_e_overlap = inner_open_e_end - user_e_start;
+                                                    //some overlap
+                                                    if (inner_open_e_start <= user_e_start && inner_open_e_end >= user_e_end) {
+                                                        user_e_overlap = user_e_end - user_e_start;
                                                     } else {
-                                                        user_e_overlap = user_e_end - inner_open_e_start;
+                                                        if (inner_open_e_start <= user_e_start) {
+                                                            user_e_overlap = inner_open_e_end - user_e_start;
+                                                        } else {
+                                                            user_e_overlap = user_e_end - inner_open_e_start;
+                                                        }
                                                     }
                                                 }
                                             }
+                                            if (0 < inner_open_e_start - user_e_end < prev_gap) {
+                                                prev_gap = inner_open_e_start - user_e_end;
+                                                prev_user_e = user_e;
+                                            } else if (0 < user_e_start - inner_open_e_end < next_gap) {
+                                                next_gap = user_e_start - inner_open_e_end;
+                                                next_user_e = user_e;
+                                            }
+                                            overlap += user_e_overlap;
+                                        });
+                                        var inner_time_score = parseInt(overlap / open_e_total / 1000 * 30000, 10);
+                                        var inner_place_score = 30;
+                                        var dist1 = get_distance(prev_user_e.place, open_e.place);
+                                        var dist2 = get_distance(open_e.place, next_user_e.place);
+                                        if (dist1 !== null && dist2 !== null) {
+                                            if (dist1 > 12) dist1 = 12;
+                                            if (dist2 > 12) dist2 = 12;
+                                            inner_place_score = parseInt((dist1 + dist2) / 24 / 1000 * 30000, 10);
+                                        } else if (dist1 !== null || dist2 !== null) {
+                                            if (dist1 == null) dist1 = dist2;
+                                            else if (dist2 == null) dist2 = dist1;
+                                            inner_place_score = parseInt((dist1 + dist2) / 24 / 1000 * 30000, 10);
+                                        } else {
+                                            inner_place_score = 30;
                                         }
-                                        if (0 < inner_open_e_start - user_e_end < prev_gap) {
-                                            prev_gap = inner_open_e_start - user_e_end;
-                                            prev_user_e = user_e;
-                                        } else if (0 < user_e_start - inner_open_e_end < next_gap) {
-                                            next_gap = user_e_start - inner_open_e_end;
-                                            next_user_e = user_e;
+                                        if (time_score > inner_time_score) {
+                                            time_score = inner_time_score;
                                         }
-                                        overlap += user_e_overlap;
-                                    });
-                                    var inner_time_score = parseInt(overlap / open_e_total / 1000 * 30000, 10);
-                                    var inner_place_score = 30;
-                                    var dist1 = get_distance(prev_user_e.place, open_e.place);
-                                    var dist2 = get_distance(open_e.place, next_user_e.place);
-                                    if(open_e.id == "egy3njijfc111lwb4qixh8wng2"){
-                                        console.log(prev_user_e, next_user_e, dist1, dist2);
+                                        if (place_score > inner_place_score) {
+                                            place_score = inner_place_score;
+                                        }
                                     }
-                                    if (dist1 !== null && dist2 !== null) {
-                                        if (dist1 > 12) dist1 = 12;
-                                        if (dist2 > 12) dist2 = 12;
-                                        inner_place_score = parseInt((dist1 + dist2) / 24 / 1000 * 30000, 10);
-                                    } else if (dist1 !== null || dist2 !== null) {
-                                        if (dist1 == null) dist1 = dist2;
-                                        else if (dist2 == null) dist2 = dist1;
-                                        inner_place_score = parseInt((dist1 + dist2) / 24 / 1000 * 30000, 10);
-                                    } else {
-                                        inner_place_score = 30;
-                                    }
-                                    if (time_score > inner_time_score) {
-                                        time_score = inner_time_score;
-                                    }
-                                    if (place_score > inner_place_score) {
-                                        place_score = inner_place_score;
-                                    }
+                                } else {
+                                    time_score = 0;
+                                    place_score = 0;
                                 }
                                 var category_score = open_e.category && category_results.length ? 40 - parseInt(category[open_e.category] / category_results.length / 1000 * 40000, 10) : 40;
                                 console.log(open_e.title, time_score, place_score, category_score);
