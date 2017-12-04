@@ -299,7 +299,7 @@ exports.recommend_event = function(req, res) {
     var now_date = new Date();
     var now_string = now_date.toISOString();
     var now_day = new Date(now_string.substring(0, now_string.indexOf('T'))).toISOString();
-    var final_date = new Date(now_date.getTime() + 3600 * 1000 * 24 * 7);
+    var final_date = new Date(now_date.getTime() + 3600 * 1000 * 24 * 6);
     var final_string = final_date.toISOString();
     var final_day = new Date(final_string.substring(0, final_string.indexOf('T'))).toISOString();
     db_event.find({
@@ -378,7 +378,7 @@ exports.recommend_event = function(req, res) {
                         start : 1,
                         end: 1,
                         place : 1
-                    }).sort({start: -1}).toArray(function(_err, user_events) {
+                    }).sort({start: 1}).toArray(function(_err, user_events) {
                         if (_err) {
                             console.log(_err);
                             res.json(null);
@@ -399,26 +399,27 @@ exports.recommend_event = function(req, res) {
                                     return null;
                                 }
                             };
-                            
+
+                            var now_day_time = new Date(now_day).getTime();
+                            var final_day_time = new Date(final_day).getTime();
                             open_events.map(function(open_e) {
                                 event_score[open_e.id] = 0;
-                                var open_len_time = new Date(open_e.close_day).getTime() - new Date(open_e.open_day).getTime();
+                                var open_day_time = new Date(open_e.open_day).getTime();
+                                var close_day_time = new Date(open_e.close_day).getTime();
+                                var open_len_time = Math.min(close_day_time, final_day_time) - Math.max(open_day_time, now_day_time);
                                 var open_len = parseInt(open_len_time / 86400000, 10) + 1;
                                 if (open_len > 6) {
-                                    open_len_time = 86400000 * 6;
+                                    open_len_time = 86400000 * 7;
                                     open_len = 6;
                                 }
-                                var open_e_start, open_e_end;
-                                if (new Date(open_e.open_day).getTime() < new Date(now_day).getTime()) {
-                                    open_e_start = new Date(open_e.start).getTime() - new Date(open_e.open_day).getTime() + new Date(now_day).getTime()
+                                
+                                if (open_day_time < now_day_time) {
+                                    open_e_start = new Date(open_e.start).getTime() - open_day_time + now_day_time;
                                 } else {
                                     open_e_start = new Date(open_e.start).getTime();
                                 }
-                                if (new Date(open_e.close_day).getTime() > new Date(final_day).getTime()) {
-                                    open_e_end = new Date(open_e.end).getTime() - open_len_time + 86400000 - new Date(open_e.close_day).getTime() + new Date(final_day).getTime();
-                                } else {
-                                    open_e_end = new Date(open_e.end).getTime() - open_len_time + 86400000;
-                                }
+                                open_e_end = new Date(open_e.end).getTime() -close_day_time + Math.max(open_day_time, now_day_time);
+                                
                                 var open_e_total = open_e_end - open_e_start;
                                 var time_score = 30;
                                 var place_score = 30;
@@ -429,11 +430,12 @@ exports.recommend_event = function(req, res) {
                                         var inner_open_e_end = open_e_end + (i * 86400000);
                                         var overlap = 0;
                                         var prev_user_e = user_events[0], next_user_e = user_events[user_events.length-1];
-                                        var prev_gap = next_gap = 86400000 * 6;
+                                        var prev_gap = next_gap = 86400000 * 7;
                                         user_events.map(function(user_e, idx) {
                                             var user_e_start = new Date(user_e.start).getTime();
                                             var user_e_end = new Date(user_e.end).getTime();
                                             var user_e_overlap;
+                                            //if (open_e.title.indexOf('타이타닉') > -1) console.log(new Date(inner_open_e_start), new Date(inner_open_e_end), new Date(user_e_start), new Date(user_e_end));
                                             if (inner_open_e_end <= user_e_start || inner_open_e_start >= user_e_end) {
                                                 // no overlap
                                                 user_e_overlap = 0;
@@ -454,10 +456,11 @@ exports.recommend_event = function(req, res) {
                                                     }
                                                 }
                                             }
-                                            if (0 < inner_open_e_start - user_e_end < prev_gap) {
+                                            //if (open_e.title.indexOf('타이타닉') > -1) console.log(prev_gap, next_gap, new Date(inner_open_e_start), new Date(inner_open_e_end), new Date(user_e_start), new Date(user_e_end));
+                                            if (inner_open_e_start >= user_e_end && inner_open_e_start - user_e_end <= prev_gap) {
                                                 prev_gap = inner_open_e_start - user_e_end;
                                                 prev_user_e = user_e;
-                                            } else if (0 < user_e_start - inner_open_e_end < next_gap) {
+                                            } else if (user_e_start >= inner_open_e_end && user_e_start - inner_open_e_end <= next_gap) {
                                                 next_gap = user_e_start - inner_open_e_end;
                                                 next_user_e = user_e;
                                             }
@@ -478,14 +481,7 @@ exports.recommend_event = function(req, res) {
                                         } else {
                                             inner_place_score = 30;
                                         }
-                                        /*
-                                        if (time_score > inner_time_score) {
-                                            time_score = inner_time_score;
-                                        }
-                                        if (place_score > inner_place_score) {
-                                            place_score = inner_place_score;
-                                        }
-                                        */
+                                        
                                         if (time_score + place_score > inner_time_score + inner_place_score) {
                                             time_score = inner_time_score;
                                             place_score = inner_place_score;
@@ -500,7 +496,7 @@ exports.recommend_event = function(req, res) {
                                     open_e.recommend_date = date.substring(0, date.indexOf('T'));
                                 }
                                 var category_score = open_e.category && category_results.length ? 40 - parseInt(category[open_e.category] / category_results.length / 1000 * 40000, 10) : 40;
-                                console.log(open_e.title, time_score, place_score, category_score);
+                                //if (open_e.title.indexOf('타이타닉') > -1) console.log(open_e.title, time_score, place_score, category_score);
                                 event_score[open_e.id] = time_score + place_score + category_score;
                             });
 
