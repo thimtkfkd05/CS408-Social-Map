@@ -48,7 +48,7 @@ section > .container {
     word-break: break-word;
 }
 .event_card .event_desc .desc_detail.long_desc {
-    height: 100px;
+    height: 60px;
     overflow: hidden;
 }
 .event_card .btn {

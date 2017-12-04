@@ -404,9 +404,9 @@ exports.recommend_event = function(req, res) {
                                 event_score[open_e.id] = 0;
                                 var open_len_time = new Date(open_e.close_day).getTime() - new Date(open_e.open_day).getTime();
                                 var open_len = parseInt(open_len_time / 86400000, 10) + 1;
-                                if (open_len > 7) {
-                                    open_len_time = 86400000 * 7;
-                                    open_len = 7;
+                                if (open_len > 6) {
+                                    open_len_time = 86400000 * 6;
+                                    open_len = 6;
                                 }
                                 var open_e_start, open_e_end;
                                 if (new Date(open_e.open_day).getTime() < new Date(now_day).getTime()) {
@@ -429,7 +429,7 @@ exports.recommend_event = function(req, res) {
                                         var inner_open_e_end = open_e_end + (i * 86400000);
                                         var overlap = 0;
                                         var prev_user_e = user_events[0], next_user_e = user_events[user_events.length-1];
-                                        var prev_gap = next_gap = 86400000 * 7;
+                                        var prev_gap = next_gap = 86400000 * 6;
                                         user_events.map(function(user_e, idx) {
                                             var user_e_start = new Date(user_e.start).getTime();
                                             var user_e_end = new Date(user_e.end).getTime();
@@ -478,16 +478,26 @@ exports.recommend_event = function(req, res) {
                                         } else {
                                             inner_place_score = 30;
                                         }
+                                        /*
                                         if (time_score > inner_time_score) {
                                             time_score = inner_time_score;
                                         }
                                         if (place_score > inner_place_score) {
                                             place_score = inner_place_score;
                                         }
+                                        */
+                                        if (time_score + place_score > inner_time_score + inner_place_score) {
+                                            time_score = inner_time_score;
+                                            place_score = inner_place_score;
+                                            var date = new Date(inner_open_e_start + 32400000).toISOString();
+                                            open_e.recommend_date = date.substring(0, date.indexOf('T'));
+                                        }
                                     }
                                 } else {
                                     time_score = 0;
                                     place_score = 0;
+                                    var date = new Date(new Date().getTime() + 32400000).toISOString();
+                                    open_e.recommend_date = date.substring(0, date.indexOf('T'));
                                 }
                                 var category_score = open_e.category && category_results.length ? 40 - parseInt(category[open_e.category] / category_results.length / 1000 * 40000, 10) : 40;
                                 console.log(open_e.title, time_score, place_score, category_score);

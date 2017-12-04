@@ -12,6 +12,8 @@ var card_template = function(e) {
                 '<br><br>',
                 'Schedule : ', e.open_day + ' ~ ' + e.close_day + ' / ' + start.substring(start.indexOf('T')+1, start.indexOf(':00.000Z')) + ' ~ ' + end.substring(end.indexOf('T')+1, end.indexOf(':00.000Z')),,
                 (e.place && e.place.lat !== null ? '<br><br>Place : ' + '<a class="map-view" data-toggle="modal" data-target="#mapModal" data-lat="' + e.place.lat + '" data-lng="' + e.place.lng + '">' + '<i class="fa fa-map-marker"' + '></i> View Map' + '</a>' : ''),
+                '<br><br>',
+                'Recommended Date : ', e.recommend_date,
             '</div>',
             '<button class="btn btn-default' + (e.open_day !== e.close_day ? ' add_event_modal' : ' add_event') + '" data-id="' + e.id + (e.open_day !== e.close_day ? '" data-toggle = "modal" data-target ="#datemodal"' : '"') + '>Join this Event</button>',
         '</div>'
@@ -39,7 +41,7 @@ var make_event_html = function(events) {
     $('#recommendation').append(card_html);
     $('.page_0').show();
     $('.event_desc .desc_detail').map(function(idx, obj) {
-        if ($(obj).height() > 100) {
+        if ($(obj).height() > 60) {
             $(obj).after('<a class="view_all" data-target="#descModal" data-toggle="modal" data-id="' + $(obj).parents('.event_card').find('button').data('id') + '"> ...view all description</a>');
             $(obj).addClass('long_desc');
         }
@@ -80,7 +82,7 @@ $(window).on('load', function() {
         if (Math.round($(window).scrollTop()) == $(document).height() - $(window).height()) {
             $('.page_' + page).length && $('.page_' + page).show();
             $('.event_desc .desc_detail').map(function(idx, obj) {
-                if ($(obj).height() > 100) {
+                if ($(obj).height() > 60) {
                     $(obj).after('<a class="view_all" data-target="#descModal" data-toggle="modal" data-id="' + $(obj).parents('.event_card').find('button').data('id') + '"> ...view all description</a>');
                     $(obj).addClass('long_desc');
                 }
